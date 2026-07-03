@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>소싱 상세 — 달빛**</title>
+<style>
+:root{
+  --primary:#FF5D00; --on-primary:#fff;
+  --bg:#fff; --surface1:rgba(0,0,0,0.03); --surface2:#fff;
+  --outline:rgba(0,0,0,0.05); --muted:#F3F3F3;
+  --t1:#0C0C0C; --t2:rgba(55,55,55,0.8); --t3:#949494;
+  --success:#078641; --success-c:#DBFCE1;
+  --warn:#CB8409; --info:#376DFA;
+  --error:#FB1239; --error-c:#FCF1F0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Pretendard JP","Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-size:14px;line-height:18px;letter-spacing:-0.012em;color:var(--t1);background:#eee;overflow-x:auto}
+.mock-note{width:1920px;margin:0 auto;background:#1c1c1c;color:#bbb;font-size:12px;line-height:16px;padding:8px 16px}
+.mock-note b{color:#fff}
+.screen{width:1920px;margin:0 auto;background:var(--bg);min-height:1080px}
+
+/* ── 셸: 헤더 72 풀폭 ── */
+.gnb{height:72px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;border-bottom:1px solid var(--outline);background:var(--bg)}
+.gnb-l{display:flex;align-items:center;gap:16px}
+.logo{font-size:18px;font-weight:800;letter-spacing:-0.02em}
+.logo span{font-weight:400}
+.gnb-r{display:flex;align-items:center;gap:12px}
+.store-select{display:flex;align-items:center;gap:6px;font-weight:500;cursor:pointer}
+.presence{display:flex;align-items:center;gap:6px;background:var(--success-c);color:var(--t1);
+  border-radius:10000px;padding:8px 14px;font-size:13px;font-weight:500}
+.presence .dot{background:var(--success)}
+.avatar{width:36px;height:36px;border-radius:10000px;background:linear-gradient(135deg,#f9c66b,#e2762d);border:1px solid var(--outline)}
+.icon-btn{width:32px;height:32px;border:none;background:none;border-radius:8px;display:flex;
+  align-items:center;justify-content:center;cursor:pointer;color:var(--t2)}
+.icon-btn:hover{background:var(--surface1)}
+
+/* ── 셸: 본문 = 사이드바 240 + 콘텐츠 ── */
+.body-row{display:flex;align-items:stretch}
+.snb{width:240px;flex:none;border-right:1px solid var(--outline);padding:8px 0 40px}
+.snb-label{height:40px;display:flex;align-items:flex-end;padding:0 20px 8px;font-size:12px;line-height:16px;color:var(--t3)}
+.snb-item{height:44px;margin:0 12px;padding:0 8px;display:flex;align-items:center;gap:12px;
+  border-radius:8px;color:var(--t1);cursor:pointer;font-size:14px}
+.snb-item:hover{background:var(--surface1)}
+.snb-item.active{background:var(--muted);font-weight:600}
+.snb-item.sub{padding-left:40px}
+.snb-item .chev{margin-left:auto;color:var(--t3)}
+.snb-item svg{flex:none;color:var(--t2)}
+.content{flex:1;min-width:0;padding:0 40px 60px}
+
+/* 콘텐츠 폭 패턴 */
+.ca-full{width:1600px;margin:0 auto}
+.ca-720{width:640px;margin:0 auto}
+.ca-1312{width:1232px;margin:0 auto}
+.two-col-48{display:flex;gap:40px;align-items:flex-start}
+.col-4{width:384px;flex:none}
+.col-8{width:808px;flex:none}
+
+/* ── 페이지 헤더 86 ── */
+.page-header{height:86px;display:flex;align-items:center;justify-content:space-between}
+.ph-l{display:flex;align-items:center;gap:12px}
+.ph-title{font-size:20px;line-height:26px;font-weight:700}
+.back{width:30px;height:30px;border:none;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t1)}
+.ph-actions{display:flex;gap:8px}
+
+/* ── 버튼 ── */
+.btn{height:38px;padding:0 16px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;
+  display:inline-flex;align-items:center;gap:6px;border:1px solid var(--outline);background:var(--bg);color:var(--t1)}
+.btn:hover{background:var(--surface1)}
+.btn-primary{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+.btn-primary:hover{background:#e85500}
+.btn-text{border:none;background:none;color:var(--t1);font-weight:500;height:34px;padding:0 8px;border-radius:8px;
+  display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.btn-text:hover{background:var(--surface1)}
+
+/* ── 통계 바 ── */
+.stats-bar{display:flex;border:1px solid var(--outline);border-radius:16px;background:var(--surface2);margin-bottom:28px}
+.stats-period{flex:none;display:flex;align-items:center;gap:8px;padding:0 24px;border-right:1px solid var(--outline);
+  font-size:13px;font-weight:500;color:var(--t2);cursor:pointer}
+.stat-cell{flex:1;padding:20px 24px;border-right:1px solid var(--outline)}
+.stat-cell:last-child{border-right:none}
+.stat-label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--t2);margin-bottom:8px}
+.stat-value{font-size:24px;line-height:32px;font-weight:700}
+.dot{width:6px;height:6px;border-radius:10000px;display:inline-block;flex:none}
+.dot-gray{background:#c4c4c4}.dot-blue{background:var(--info)}.dot-orange{background:var(--primary)}
+.dot-yellow{background:var(--warn)}.dot-green{background:var(--success)}.dot-red{background:var(--error)}
+
+/* ── 테이블 블록 (내부 간격 12) ── */
+.search-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.search-input{width:480px;height:38px;border:1px solid var(--outline);border-radius:8px;display:flex;
+  align-items:center;padding:0 12px;color:var(--t3);gap:8px;background:var(--bg)}
+.search-input span{flex:1}
+.bulk-bar{display:flex;align-items:center;gap:12px}
+.bulk-count{font-size:13px;color:var(--t2)}
+.bulk-count b{color:var(--t1)}
+.filter-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.chip{height:38px;padding:0 14px;border:1px solid var(--outline);border-radius:10000px;background:var(--bg);
+  font-size:13px;font-weight:500;display:inline-flex;align-items:center;gap:6px;cursor:pointer;color:var(--t1)}
+.chip:hover{background:var(--surface1)}
+.filter-reset{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--t2);cursor:pointer}
+
+table.grid{width:100%;border-collapse:collapse}
+.grid th{font-size:13px;font-weight:500;color:var(--t3);text-align:left;padding:14px 12px;
+  border-top:1px solid var(--outline);border-bottom:1px solid var(--outline);white-space:nowrap}
+.grid th .sort{color:#c4c4c4;font-size:11px}
+.grid th.sorted{color:var(--t1);font-weight:600}
+.grid th.sorted .sort{color:var(--t1)}
+.grid td{padding:14px 12px;border-bottom:1px solid var(--outline);vertical-align:middle;font-size:14px}
+.grid tr:hover td{background:var(--surface1)}
+.cell-main{font-weight:500}
+.cell-sub{font-size:12px;line-height:16px;color:var(--t3);margin-top:2px}
+.cell-dim{color:var(--t3)}
+.ellipsis{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grid input[type=checkbox]{width:16px;height:16px;accent-color:var(--t1)}
+
+.status-select{height:32px;padding:0 10px;border:1px solid var(--outline);border-radius:10000px;
+  display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;cursor:pointer;background:var(--bg);white-space:nowrap}
+.status-select .chev{color:var(--t3);font-size:10px}
+.tag{background:var(--muted);border-radius:10000px;padding:4px 10px;font-size:12px;line-height:16px;
+  color:var(--t2);display:inline-block;white-space:nowrap}
+.tags{display:flex;gap:4px;flex-wrap:nowrap}
+.badge-warn{background:var(--error-c);color:var(--error);border-radius:10000px;padding:3px 8px;
+  font-size:11px;line-height:14px;font-weight:600;white-space:nowrap}
+.badge-success{background:var(--success-c);color:var(--success);border-radius:10000px;padding:3px 8px;
+  font-size:11px;line-height:14px;font-weight:600;white-space:nowrap}
+.type-chip{border:1px solid var(--outline);border-radius:6px;padding:3px 8px;font-size:12px;font-weight:600;
+  color:var(--t2);white-space:nowrap}
+
+.table-footer{display:flex;align-items:center;justify-content:space-between;margin-top:12px;height:38px}
+.tf-total{font-size:13px;color:var(--t2)}
+.tf-r{display:flex;align-items:center;gap:16px;font-size:13px;color:var(--t2)}
+.pager{display:flex;align-items:center;gap:4px}
+.page-n{width:30px;height:30px;border-radius:10000px;display:flex;align-items:center;justify-content:center;
+  font-size:13px;cursor:pointer;color:var(--t2)}
+.page-n.cur{background:var(--t1);color:#fff;font-weight:600}
+.page-n:hover:not(.cur){background:var(--surface1)}
+
+/* ── 카드 ── */
+.card{border:1px solid var(--outline);border-radius:16px;background:var(--surface2);margin-bottom:28px}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px}
+.card-title{font-size:16px;line-height:20px;font-weight:700}
+.card-title .cnt{color:var(--t3);font-weight:600}
+.card-desc{font-size:13px;color:var(--t3);margin-top:4px}
+.card-head-action{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--t2);cursor:pointer}
+.card-body{padding:4px 24px 24px}
+.card-hr{border:none;border-top:1px solid var(--outline);margin:0 24px}
+.card .empty{color:var(--t3);padding:20px 0}
+
+/* ── 폼 ── */
+.field{margin-top:20px}
+.field-label{font-size:14px;font-weight:500;margin-bottom:8px;display:flex;gap:4px}
+.req{color:var(--primary)}
+.input{height:38px;border:1px solid var(--outline);border-radius:8px;width:100%;display:flex;
+  align-items:center;padding:0 12px;background:var(--bg)}
+.input.ph{color:var(--t3)}
+.textarea{min-height:76px;border:1px solid var(--outline);border-radius:8px;width:100%;
+  padding:10px 12px;color:var(--t3);background:var(--bg)}
+.input-row{display:flex;align-items:center;gap:8px}
+.select{justify-content:space-between;cursor:pointer}
+.select .chev{color:var(--t3)}
+.add-line{margin-top:10px}
+.hint{font-size:12px;line-height:16px;color:var(--t3);margin-top:6px}
+.assign-chip{height:34px;padding:0 14px;border:1px solid var(--outline);border-radius:8px;background:var(--bg);
+  font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center}
+.assign-chip:hover{background:var(--surface1)}
+
+/* ── 상세: 라벨:값 ── */
+.kv{display:flex;padding:10px 0;gap:12px}
+.kv-k{width:92px;flex:none;color:var(--t3)}
+.kv-v{flex:1;min-width:0}
+.kv-v .line{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.kv-v .line:last-child{margin-bottom:0}
+.kv-v a{color:var(--t1);text-decoration:underline;text-underline-offset:2px}
+.mini-tag{background:var(--muted);border-radius:4px;padding:2px 6px;font-size:11px;line-height:14px;color:var(--t2)}
+
+/* ── 상세 우측: 섹션/타임라인 ── */
+.section-head{display:flex;align-items:center;justify-content:space-between;height:46px;margin-bottom:16px}
+.section-title{font-size:20px;line-height:26px;font-weight:700}
+.section-title .cnt{color:var(--t3)}
+.status-card{border:1px solid var(--outline);border-radius:16px;margin-bottom:24px}
+.status-card .top{padding:16px 20px}
+.status-card .status-select{width:100%;height:44px;justify-content:space-between;border-radius:12px;font-size:14px}
+.status-card .bottom{display:flex;border-top:1px solid var(--outline);padding:14px 20px;gap:48px}
+.sc-item{display:flex;align-items:center;gap:10px;font-size:13px}
+.sc-item .k{color:var(--t3)}
+.sc-item .v{font-weight:600;font-size:14px}
+.timeline{position:relative;padding-left:26px}
+.timeline:before{content:"";position:absolute;left:5px;top:8px;bottom:8px;width:1px;background:var(--outline)}
+.tl-item{position:relative;padding-bottom:28px}
+.tl-item:before{content:"";position:absolute;left:-26px;top:5px;width:9px;height:9px;border-radius:10000px;
+  background:var(--info);border:2px solid #fff;box-shadow:0 0 0 1px var(--info)}
+.tl-item.gray:before{background:#c4c4c4;box-shadow:0 0 0 1px #c4c4c4}
+.tl-meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--t3);margin-bottom:8px}
+.tl-title{font-size:14px;font-weight:700;margin-bottom:6px}
+.tl-body{color:var(--t2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tl-more{font-size:13px;color:var(--t3);margin-top:6px;cursor:pointer}
+.meta-chip{border:1px solid var(--outline);border-radius:4px;padding:2px 6px;font-size:11px;font-weight:600;color:var(--t2)}
+.meta-chip.mail{color:var(--info);border-color:rgba(55,109,250,0.3)}
+
+/* 캐스케이드 채널 셀렉터 등 폼 보조 */
+.cascade{display:flex;border:1px solid var(--outline);border-radius:8px;overflow:hidden}
+.cascade .colm{flex:1;border-right:1px solid var(--outline);min-height:150px}
+.cascade .colm:last-child{border-right:none}
+.cascade .colm-h{font-size:12px;color:var(--t3);padding:10px 12px 4px}
+.cascade .opt{padding:9px 12px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:14px}
+.cascade .opt:hover{background:var(--surface1)}
+.cascade .opt .chev{color:var(--t3)}
+</style>
+</head>
+<body>
+<div class="mock-note"><b>목업 주석</b> — 페이지 타입: 상세 / 폭 패턴: 2열 4:8 (384+40+808, max-1312) / 좌: 요약 카드 스택(기본 정보·소스·크리에이터 연결·미팅) / 우: 컨택 히스토리 타임라인. 개인정보 기본 마스킹 + "마스킹 해제" 액션</div>
+<div class="screen">
+
+  <header class="gnb">
+    <div class="gnb-l">
+      <button class="icon-btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3.5" width="15" height="13" rx="2"/><line x1="7.5" y1="3.5" x2="7.5" y2="16.5"/></svg></button>
+      <div class="logo">CLASS101 <span>Admin</span></div>
+    </div>
+    <div class="gnb-r">
+      <div class="store-select">한국 스토어 <span class="chev">▾</span></div>
+      <div class="presence"><span class="dot dot-green"></span>응대 중</div>
+      <div class="avatar"></div>
+    </div>
+  </header>
+  <div class="body-row">
+
+    <nav class="snb">
+      <div class="snb-label">고객관리</div>
+      <div class="snb-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6.5" r="3"/><path d="M4 16.5c0-3 2.7-4.5 6-4.5s6 1.5 6 4.5"/></svg>사용자 관리<span class="chev">▸</span></div>
+      <div class="snb-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="2.5"/><circle cx="13.5" cy="8" r="2"/><path d="M2.5 15.5c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4"/><path d="M13 12c2 0 4 1.2 4 3.5"/></svg>크리에이터 관리<span class="chev">▾</span></div>
+      <div class="snb-item sub">크리에이터 관리</div>
+      <div class="snb-item sub active">크리에이터 소싱 관리</div>
+      <div class="snb-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 9.5c0 3.3-3.1 6-7 6-.9 0-1.8-.14-2.6-.4L3.5 16l1-3A5.5 5.5 0 0 1 3 9.5c0-3.3 3.1-6 7-6s7 2.7 7 6z"/></svg>CX 해피챗<span class="chev">▸</span></div>
+      <div class="snb-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3a4.5 4.5 0 0 1 4.5 4.5c0 4 1.5 5.5 1.5 5.5H4s1.5-1.5 1.5-5.5A4.5 4.5 0 0 1 10 3z"/><path d="M8.5 16a1.5 1.5 0 0 0 3 0"/></svg>알림<span class="chev">▸</span></div>
+      <div class="snb-label">101+ Studio</div>
+      <div class="snb-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="14" height="12" rx="2"/><line x1="3" y1="8.5" x2="17" y2="8.5"/><line x1="7" y1="2.5" x2="7" y2="6"/><line x1="13" y1="2.5" x2="13" y2="6"/></svg>구독 클래스 관리</div>
+      <div class="snb-label">크리에이터 센터</div>
+      <div class="snb-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3a4.5 4.5 0 0 1 4.5 4.5c0 4 1.5 5.5 1.5 5.5H4s1.5-1.5 1.5-5.5A4.5 4.5 0 0 1 10 3z"/><path d="M8.5 16a1.5 1.5 0 0 0 3 0"/></svg>공지 사항</div>
+      <div class="snb-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="12" height="15" rx="2"/><line x1="7" y1="7" x2="13" y2="7"/><line x1="7" y1="10.5" x2="13" y2="10.5"/></svg>배너</div>
+      <div class="snb-label">상품 및 클래스 관리</div>
+      <div class="snb-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1.5"/><rect x="11" y="3" width="6" height="6" rx="1.5"/><rect x="3" y="11" width="6" height="6" rx="1.5"/><rect x="11" y="11" width="6" height="6" rx="1.5"/></svg>상품 관리</div>
+      <div class="snb-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="12" height="15" rx="2"/><line x1="7" y1="7" x2="13" y2="7"/><line x1="7" y1="10.5" x2="13" y2="10.5"/></svg>클래스 관리</div>
+    </nav>
+    <main class="content">
+
+      <div class="ca-1312">
+        <div class="page-header">
+          <div class="ph-l">
+            <button class="back"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.5 4 6.5 10l6 6"/></svg></button>
+            <div class="ph-title">달빛**</div>
+          </div>
+          <div class="ph-actions">
+            <button class="btn"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.8 3.7a1.8 1.8 0 0 1 2.5 2.5l-8.6 8.6-3.4.9.9-3.4 8.6-8.6z"/></svg> 소싱 정보 수정</button>
+          </div>
+        </div>
+        <div class="two-col-48">
+          <div class="col-4">
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">기본 정보</div>
+            <div class="card-head-action"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 10S5.5 4.8 10 4.8 17.5 10 17.5 10 14.5 15.2 10 15.2 2.5 10 2.5 10z"/><circle cx="10" cy="10" r="2.4"/></svg> 마스킹 해제</div>
+          </div>
+          <hr class="card-hr">
+          <div class="card-body" style="padding-top:10px">
+            <div class="kv"><div class="kv-k">트래킹 코드</div><div class="kv-v">SRC-700-04821</div></div>
+            <div class="kv"><div class="kv-k">활동명</div><div class="kv-v">달빛**</div></div>
+            <div class="kv"><div class="kv-k">이메일</div><div class="kv-v"><div class="line">mo****@naver.com <span class="mini-tag">대표</span></div><div class="line">da******@gmail.com</div></div></div>
+            <div class="kv"><div class="kv-k">휴대폰</div><div class="kv-v">+8210274****</div></div>
+            <div class="kv"><div class="kv-k">채널</div><div class="kv-v"><div class="line"><span class="tag">유튜브 128k</span><span class="tag">인스타 45k</span></div></div></div>
+            <div class="kv"><div class="kv-k">상태</div><div class="kv-v"><span class="status-select"><span class="dot dot-blue"></span>담당자 소통중 <span class="chev">▾</span></span></div></div>
+            <div class="kv"><div class="kv-k">BD 담당자</div><div class="kv-v"><div class="line">xavi@101.inc <button class="assign-chip" style="height:28px;font-size:12px;padding:0 10px">변경</button></div></div></div>
+            <div class="kv"><div class="kv-k">등록일</div><div class="kv-v"><span style="color:var(--t2)">2026.04.02</span></div></div>
+            <div class="kv"><div class="kv-k">수정일</div><div class="kv-v"><span style="color:var(--t2)">2026.06.28</span></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div class="card-title">소스 정보</div></div>
+          <hr class="card-hr">
+          <div class="card-body" style="padding-top:10px">
+            <div class="kv"><div class="kv-k">UTM 소스</div><div class="kv-v">youtube_shorts_2604</div></div>
+            <div class="kv"><div class="kv-k">참고 링크</div><div class="kv-v"><div class="line"><a href="#">youtube.com/@dalbit_draw</a> <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4H4.5A1.5 1.5 0 0 0 3 5.5v10A1.5 1.5 0 0 0 4.5 17h10a1.5 1.5 0 0 0 1.5-1.5V12"/><path d="M11 3h6v6"/><path d="M17 3 9 11"/></svg></div></div></div>
+            <div class="kv"><div class="kv-k">설명</div><div class="kv-v"><span style="color:var(--t2)">드로잉 카테고리 상위 노출 채널. 캐릭터 드로잉 튜토리얼 위주</span></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">크리에이터 연결 <span class="cnt">(1)</span></div>
+            <div class="card-head-action"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 11.5a3.5 3.5 0 0 0 5 0l2.5-2.5a3.5 3.5 0 0 0-5-5L9.7 5.3"/><path d="M11.5 8.5a3.5 3.5 0 0 0-5 0L4 11a3.5 3.5 0 0 0 5 5l1.3-1.3"/></svg> 연결 관리</div>
+          </div>
+          <hr class="card-hr">
+          <div class="card-body" style="padding-top:10px">
+            <div class="kv"><div class="kv-k">크리에이터</div>
+              <div class="kv-v"><div class="line"><a href="#">달빛토끼</a> <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4H4.5A1.5 1.5 0 0 0 3 5.5v10A1.5 1.5 0 0 0 4.5 17h10a1.5 1.5 0 0 0 1.5-1.5V12"/><path d="M11 3h6v6"/><path d="M17 3 9 11"/></svg> <span class="badge-success">자동 확정</span></div>
+              <div class="cell-sub">이메일 + 휴대폰 일치 (2026.06.20 배치)</div></div></div>
+            <div class="kv"><div class="kv-k">클래스</div><div class="kv-v"><span style="color:var(--t2)">진행 클래스 2 · 계약 1건</span></div></div>
+            <div class="kv"><div class="kv-k">총 정산금액</div><div class="kv-v">₩12,480,000</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">미팅 <span class="cnt">(1)</span></div>
+              <div class="card-desc">Calendly 연동</div>
+            </div>
+          </div>
+          <hr class="card-hr">
+          <div class="card-body" style="padding-top:10px">
+            <div class="kv"><div class="kv-k">미팅 상태</div><div class="kv-v"><span class="status-select" style="height:28px;font-size:12px"><span class="dot dot-green"></span>완료</span></div></div>
+            <div class="kv"><div class="kv-k">일시</div><div class="kv-v">2026.06.19 (금) 14:00</div></div>
+            <div class="kv"><div class="kv-k">담당자</div><div class="kv-v">xavi@101.inc</div></div>
+            <div class="kv"><div class="kv-k">커리큘럼</div><div class="kv-v"><div class="line"><a href="#">커리큘럼 문서</a> <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4H4.5A1.5 1.5 0 0 0 3 5.5v10A1.5 1.5 0 0 0 4.5 17h10a1.5 1.5 0 0 0 1.5-1.5V12"/><path d="M11 3h6v6"/><path d="M17 3 9 11"/></svg></div></div></div>
+          </div>
+        </div>
+          </div>
+          <div class="col-8">
+        <div class="section-head">
+          <div class="section-title">컨택 히스토리 <span class="cnt">(4)</span></div>
+          <button class="btn"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="4" x2="10" y2="16"/><line x1="4" y1="10" x2="16" y2="10"/></svg> 히스토리 추가</button>
+        </div>
+        <div class="status-card">
+          <div class="top">
+            <span class="status-select"><span style="display:flex;align-items:center;gap:8px"><span class="dot dot-blue"></span>담당자 소통중</span> <span class="chev">▾</span></span>
+          </div>
+          <div class="bottom">
+            <div class="sc-item"><span class="k">최초 발송일</span><span class="v">2026년 4월 2일</span></div>
+            <div class="sc-item"><span class="k">마지막 발송일</span><span class="v">2026년 6월 28일</span></div>
+            <div class="sc-item"><span class="k">수신거부</span><span class="v" style="color:var(--success)">아니오</span></div>
+          </div>
+        </div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-meta"><span class="meta-chip mail">이메일</span><span class="meta-chip">700</span>
+              2026.06.28 · From : xavi@101.inc <span style="color:#c4c4c4">· message_id 8f3a…c21</span></div>
+            <div class="tl-title">달빛토끼님, 커리큘럼 초안 공유드립니다</div>
+            <div class="tl-body">안녕하세요, 클래스101 크리에이터팀입니다. 지난 미팅에서 논의한 캐릭터 드로잉 클래스 커리큘럼 초안을 정리해 공유드립니다. 챕터 구성과 준비물 목록을 확인해주시고, 편하신 시간에 회신 부탁드립니다.</div>
+            <div class="tl-more">더 보기</div>
+          </div>
+          <div class="tl-item gray">
+            <div class="tl-meta"><span class="meta-chip">메모</span>2026.06.19 · 작성 : xavi@101.inc</div>
+            <div class="tl-title">미팅 결과 — 긍정적, 커리큘럼 검토 단계로</div>
+            <div class="tl-body">클래스 오픈 의향 높음. 주 1회 촬영 가능, 9월 오픈 목표. 계약 조건은 표준안으로 안내하기로 함.</div>
+          </div>
+          <div class="tl-item gray">
+            <div class="tl-meta"><span class="meta-chip">미팅</span><span class="meta-chip">Calendly</span>2026.06.19 14:00 · 담당 : xavi@101.inc</div>
+            <div class="tl-title">1차 온라인 미팅 완료</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-meta"><span class="meta-chip mail">이메일</span><span class="meta-chip">700</span>
+              2026.05.28 · From : sua.lee@101.inc <span style="color:#c4c4c4">· message_id 2b9d…e07</span></div>
+            <div class="tl-title">클래스101에서 달빛토끼님과 함께 온라인 강의를 만들고 싶습니다!</div>
+            <div class="tl-body">안녕하세요, 달빛토끼님. 클래스101 크리에이터팀입니다. 평소 채널의 콘텐츠와 활동을 보며, 가진 경험과 노하우가 많은 분들에게 새로운 배움의 기회가 될 수 있겠다고 느껴 연락드리게 되었습니다.</div>
+            <div class="tl-more">더 보기</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+</body>
+</html>
