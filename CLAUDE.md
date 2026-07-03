@@ -8,6 +8,12 @@
 2. `tokens/tokens.md` — 컬러/타이포/스페이싱 값 (vibrant-ui 실제 토큰)
 3. `images/README.md` — 원본 Figma 파일 링크와 주요 노드 ID
 
+## 프로젝트 구조
+- 클래스101 하위 프로젝트는 `projects/class101/<프로젝트명>/` 아래에 만든다.
+  그 안에서 작업할 때는 `projects/class101/CLAUDE.md`의 규칙이 항상 적용된다.
+- 다른 저장소에서 클래스101 어드민 작업을 할 때는 이 저장소를 세션에 추가하고
+  `class101-admin-design` 스킬(`.claude/skills/`)을 사용한다.
+
 ## 규칙
 - 새 화면을 디자인할 때는 `docs/layout-patterns.md`의 페이지 타입(목록/폼/상세) 중
   가장 가까운 것을 골라 그 골격과 콘텐츠 폭 패턴 5종을 유지한다. 임의로 새 레이아웃을 발명하지 않는다.
