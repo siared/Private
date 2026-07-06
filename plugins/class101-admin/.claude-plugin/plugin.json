@@ -1,0 +1,8 @@
+{
+  "name": "class101-admin",
+  "description": "CLASS101 어드민 디자인 패턴. 어드민 화면(목록/폼/상세) 디자인·구현 시 CLASS101 Admin Figma에서 추출한 레이아웃과 vibrant-ui 토큰을 적용한다.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Sia"
+  }
+}

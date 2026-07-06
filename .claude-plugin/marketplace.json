@@ -1,0 +1,18 @@
+{
+  "name": "class101-design",
+  "owner": {
+    "name": "Sia",
+    "email": "siared.92@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "class101-admin",
+      "source": "./plugins/class101-admin",
+      "description": "CLASS101 어드민 디자인 패턴 — Figma 실측 레이아웃(셸/목록/폼/상세)과 vibrant-ui 토큰을 적용하는 design 스킬",
+      "version": "0.1.0",
+      "author": {
+        "name": "Sia"
+      }
+    }
+  ]
+}

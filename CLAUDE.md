@@ -11,8 +11,12 @@
 ## 프로젝트 구조
 - 클래스101 하위 프로젝트는 `projects/class101/<프로젝트명>/` 아래에 만든다.
   그 안에서 작업할 때는 `projects/class101/CLAUDE.md`의 규칙이 항상 적용된다.
-- 다른 저장소에서 클래스101 어드민 작업을 할 때는 이 저장소를 세션에 추가하고
-  `class101-admin-design` 스킬(`.claude/skills/`)을 사용한다.
+- 다른 저장소에서 클래스101 어드민 작업을 할 때는 `class101-admin` 플러그인을 쓴다
+  (설치법은 README "플러그인으로 다른 리포에서 쓰기"). 플러그인 설치가 안 된 세션이면
+  이 저장소를 세션에 추가해 `class101-admin-design` 스킬(`.claude/skills/`)을 쓴다.
+- **`docs/` 또는 `tokens/`를 수정하면 반드시 `scripts/sync-plugin-refs.sh`를 실행**해
+  플러그인에 번들된 사본(`plugins/class101-admin/skills/design/references/`)을
+  동기화하고 함께 커밋한다.
 
 ## 규칙
 - 새 화면을 디자인할 때는 `docs/layout-patterns.md`의 페이지 타입(목록/폼/상세) 중
