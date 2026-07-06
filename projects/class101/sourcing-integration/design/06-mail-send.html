@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>소싱 그룹 — 템플릿 메일 발송</title>
+<style>
+:root{
+  --primary:#FF5D00; --on-primary:#fff;
+  --bg:#fff; --surface1:rgba(0,0,0,0.03); --surface2:#fff;
+  --outline:rgba(0,0,0,0.05); --muted:#F3F3F3;
+  --t1:#0C0C0C; --t2:rgba(55,55,55,0.8); --t3:#949494;
+  --success:#078641; --success-c:#DBFCE1;
+  --warn:#CB8409; --info:#376DFA;
+  --error:#FB1239; --error-c:#FCF1F0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Pretendard JP","Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-size:14px;line-height:18px;letter-spacing:-0.012em;color:var(--t1);background:#eee;overflow-x:auto}
+.mock-note{width:1920px;margin:0 auto;background:#1c1c1c;color:#bbb;font-size:12px;line-height:16px;padding:8px 16px}
+.mock-note b{color:#fff}
+.screen{width:1920px;margin:0 auto;background:var(--bg);min-height:1080px}
+
+/* ── 셸 ── */
+.gnb{height:72px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;border-bottom:1px solid var(--outline);background:var(--bg)}
+.gnb-l{display:flex;align-items:center;gap:16px}
+.logo{font-size:18px;font-weight:800;letter-spacing:-0.02em}
+.logo span{font-weight:400}
+.gnb-r{display:flex;align-items:center;gap:12px}
+.store-select{display:flex;align-items:center;gap:6px;font-weight:500;cursor:pointer}
+.presence{display:flex;align-items:center;gap:6px;background:var(--success-c);color:var(--t1);
+  border-radius:10000px;padding:8px 14px;font-size:13px;font-weight:500}
+.presence .dot{background:var(--success)}
+.avatar{width:36px;height:36px;border-radius:10000px;background:linear-gradient(135deg,#f9c66b,#e2762d);border:1px solid var(--outline)}
+.icon-btn{width:32px;height:32px;border:none;background:none;border-radius:8px;display:flex;
+  align-items:center;justify-content:center;cursor:pointer;color:var(--t2)}
+.icon-btn:hover{background:var(--surface1)}
+.body-row{display:flex;align-items:stretch}
+.snb{width:240px;flex:none;border-right:1px solid var(--outline);padding:8px 0 40px}
+.snb-label{height:40px;display:flex;align-items:flex-end;padding:0 20px 8px;font-size:12px;line-height:16px;color:var(--t3)}
+.snb-item{height:44px;margin:0 12px;padding:0 8px;display:flex;align-items:center;gap:12px;
+  border-radius:8px;color:var(--t1);cursor:pointer;font-size:14px}
+.snb-item:hover{background:var(--surface1)}
+.snb-item.active{background:var(--muted);font-weight:600}
+.snb-item.sub{padding-left:40px}
+.snb-item .chev{margin-left:auto;color:var(--t3)}
+.snb-item svg{flex:none;color:var(--t2)}
+.content{flex:1;min-width:0;padding:0 40px 60px}
+
+/* 콘텐츠 폭 패턴: 2열 8:4 */
+.ca-1312{width:1232px;margin:0 auto}
+.two-col-84{display:flex;gap:40px;align-items:flex-start}
+.col-8{width:808px;flex:none}
+.col-4{width:384px;flex:none}
+
+/* ── 페이지 헤더 86 ── */
+.page-header{height:86px;display:flex;align-items:center;justify-content:space-between}
+.ph-l{display:flex;align-items:center;gap:12px}
+.ph-title{font-size:20px;line-height:26px;font-weight:700}
+.back{width:30px;height:30px;border:none;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t1)}
+.ph-actions{display:flex;gap:8px}
+
+/* ── 버튼 ── */
+.btn{height:38px;padding:0 16px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;
+  display:inline-flex;align-items:center;gap:6px;border:1px solid var(--outline);background:var(--bg);color:var(--t1)}
+.btn:hover{background:var(--surface1)}
+.btn-primary{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+.btn-primary:hover{background:#e85500}
+
+/* ── 카드 ── */
+.card{border:1px solid var(--outline);border-radius:16px;background:var(--surface2);margin-bottom:28px}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px}
+.card-title{font-size:16px;line-height:20px;font-weight:700}
+.card-title .cnt{color:var(--t3);font-weight:600}
+.card-desc{font-size:13px;color:var(--t3);margin-top:4px}
+.card-head-action{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--t2);cursor:pointer}
+.card-body{padding:4px 24px 24px}
+.card-hr{border:none;border-top:1px solid var(--outline);margin:0 24px}
+.hint{font-size:12px;line-height:16px;color:var(--t3);margin-top:6px}
+
+/* ── 템플릿 선택 목록 ── */
+.tpl-row{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--outline);cursor:pointer}
+.tpl-row:last-child{border-bottom:none}
+.radio{width:16px;height:16px;border-radius:10000px;border:1.5px solid #c4c4c4;flex:none;margin-top:1px;background:var(--bg)}
+.radio.on{border:5px solid var(--t1)}
+.tpl-name{font-weight:600}
+.tpl-meta{font-size:12px;line-height:16px;color:var(--t3);margin-top:3px}
+.tpl-badges{margin-left:auto;display:flex;gap:4px;align-items:center}
+.type-chip{border:1px solid var(--outline);border-radius:6px;padding:3px 8px;font-size:12px;font-weight:600;
+  color:var(--t2);white-space:nowrap}
+
+/* ── 미리보기 ── */
+.pv-meta{padding:14px 0;border-bottom:1px solid var(--outline);display:flex;gap:12px;font-size:13px}
+.pv-meta .k{width:72px;flex:none;color:var(--t3)}
+.pv-meta .v{font-weight:500}
+.pv-body{padding:20px 0 4px;max-width:62ch}
+.pv-body p{margin:0 0 14px;font-size:14px;line-height:21px;color:var(--t1)}
+.var-chip{background:rgba(55,109,250,0.08);color:var(--info);border-radius:4px;padding:1px 5px;
+  font-size:12px;font-weight:600;white-space:nowrap}
+
+/* ── 우측 요약: 라벨:값 ── */
+.kv{display:flex;padding:10px 0;gap:12px;font-size:14px}
+.kv-k{flex:1;color:var(--t3)}
+.kv-v{font-weight:500;white-space:nowrap}
+.kv-v.dim{color:var(--t3);font-weight:400}
+.kv-total{display:flex;padding:14px 0 2px;gap:12px;font-weight:700;border-top:1px solid var(--outline);margin-top:6px}
+.kv-total .kv-k{color:var(--t1);font-weight:700}
+.badge-success{background:var(--success-c);color:var(--success);border-radius:10000px;padding:3px 8px;
+  font-size:11px;line-height:14px;font-weight:600;white-space:nowrap}
+
+/* ── 발송 옵션 ── */
+.opt-row{display:flex;align-items:center;gap:10px;padding:11px 0;cursor:pointer}
+.opt-row .lbl{font-weight:500}
+.opt-row .cap{font-size:12px;color:var(--t3);margin-left:auto}
+.input{height:38px;border:1px solid var(--outline);border-radius:8px;width:100%;display:flex;
+  align-items:center;padding:0 12px;background:var(--bg)}
+.input.ph{color:var(--t3)}
+.select{justify-content:space-between;cursor:pointer}
+.select .chev{color:var(--t3)}
+.field{margin-top:20px}
+.field-label{font-size:14px;font-weight:500;margin-bottom:8px;display:flex;gap:4px}
+.dot{width:6px;height:6px;border-radius:10000px;display:inline-block;flex:none}
+.dot-green{background:var(--success)}
+</style>
+</head>
+<body>
+<div class="mock-note"><b>목업 주석</b> — 페이지 타입: 발송 작성 / 폭 패턴: 2열 8:4 (메인 808 = 템플릿 선택+미리보기, 보조 384 = 발송 대상·옵션). 템플릿에 발송 화면 사례가 없어 목록/폼 컴포넌트로 조합 — 임의 결정: 템플릿 라디오 목록, 치환 변수 파란 칩({활동명} 등 PRD 필드), [테스트 발송]은 아웃라인·[발송]이 primary 1개 — README 참조</div>
+<div class="screen">
+
+  <header class="gnb">
+    <div class="gnb-l">
+      <button class="icon-btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3.5" width="15" height="13" rx="2"/><line x1="7.5" y1="3.5" x2="7.5" y2="16.5"/></svg></button>
+      <div class="logo">CLASS101 <span>Admin</span></div>
+    </div>
+    <div class="gnb-r">
+      <div class="store-select">한국 스토어 <span class="chev">▾</span></div>
+      <div class="presence"><span class="dot dot-green"></span>응대 중</div>
+      <div class="avatar"></div>
+    </div>
+  </header>
+  <div class="body-row">
+
+    <nav class="snb">
+      <div class="snb-label">고객관리</div>
+      <div class="snb-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6.5" r="3"/><path d="M4 16.5c0-3 2.7-4.5 6-4.5s6 1.5 6 4.5"/></svg>사용자 관리<span class="chev">▸</span></div>
+      <div class="snb-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="2.5"/><circle cx="13.5" cy="8" r="2"/><path d="M2.5 15.5c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4"/><path d="M13 12c2 0 4 1.2 4 3.5"/></svg>크리에이터 관리<span class="chev">▾</span></div>
+      <div class="snb-item sub">크리에이터 관리</div>
+      <div class="snb-item sub">크리에이터 소싱 관리</div>
+      <div class="snb-item sub active">소싱 그룹 관리</div>
+      <div class="snb-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 9.5c0 3.3-3.1 6-7 6-.9 0-1.8-.14-2.6-.4L3.5 16l1-3A5.5 5.5 0 0 1 3 9.5c0-3.3 3.1-6 7-6s7 2.7 7 6z"/></svg>CX 해피챗<span class="chev">▸</span></div>
+      <div class="snb-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3a4.5 4.5 0 0 1 4.5 4.5c0 4 1.5 5.5 1.5 5.5H4s1.5-1.5 1.5-5.5A4.5 4.5 0 0 1 10 3z"/><path d="M8.5 16a1.5 1.5 0 0 0 3 0"/></svg>알림<span class="chev">▸</span></div>
+      <div class="snb-label">101+ Studio</div>
+      <div class="snb-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="14" height="12" rx="2"/><line x1="3" y1="8.5" x2="17" y2="8.5"/><line x1="7" y1="2.5" x2="7" y2="6"/><line x1="13" y1="2.5" x2="13" y2="6"/></svg>구독 클래스 관리</div>
+      <div class="snb-label">크리에이터 센터</div>
+      <div class="snb-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3a4.5 4.5 0 0 1 4.5 4.5c0 4 1.5 5.5 1.5 5.5H4s1.5-1.5 1.5-5.5A4.5 4.5 0 0 1 10 3z"/><path d="M8.5 16a1.5 1.5 0 0 0 3 0"/></svg>공지 사항</div>
+      <div class="snb-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="12" height="15" rx="2"/><line x1="7" y1="7" x2="13" y2="7"/><line x1="7" y1="10.5" x2="13" y2="10.5"/></svg>배너</div>
+      <div class="snb-label">상품 및 클래스 관리</div>
+      <div class="snb-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1.5"/><rect x="11" y="3" width="6" height="6" rx="1.5"/><rect x="3" y="11" width="6" height="6" rx="1.5"/><rect x="11" y="11" width="6" height="6" rx="1.5"/></svg>상품 관리</div>
+      <div class="snb-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="12" height="15" rx="2"/><line x1="7" y1="7" x2="13" y2="7"/><line x1="7" y1="10.5" x2="13" y2="10.5"/></svg>클래스 관리</div>
+    </nav>
+    <main class="content">
+
+      <div class="ca-1312">
+        <div class="page-header">
+          <div class="ph-l">
+            <button class="back"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12.5 4 6.5 10l6 6"/></svg></button>
+            <div class="ph-title">템플릿 메일 발송</div>
+          </div>
+          <div class="ph-actions">
+            <button class="btn"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13V4"/><path d="m6.5 7.5 3.5-3.5 3.5 3.5"/><rect x="4" y="13" width="12" height="3.5" rx="1"/></svg> 테스트 발송</button>
+            <button class="btn btn-primary"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 10 17 3.5 13 16.5l-4-4-2.5 2v-3.5z"/></svg> 발송</button>
+          </div>
+        </div>
+
+        <div class="two-col-84">
+
+          <!-- 메인 8fr: 템플릿 선택 + 미리보기 -->
+          <div class="col-8">
+
+            <div class="card">
+              <div class="card-head">
+                <div>
+                  <div class="card-title">메일 템플릿 <span class="cnt">(4)</span></div>
+                  <div class="card-desc">발송 타입에 맞는 템플릿을 선택하세요. 성과 지표는 최근 90일 기준입니다.</div>
+                </div>
+                <div class="card-head-action">템플릿 관리 ↗</div>
+              </div>
+              <hr class="card-hr">
+              <div class="card-body">
+                <div class="tpl-row">
+                  <span class="radio on"></span>
+                  <div>
+                    <div class="tpl-name">신규 소싱 제안 (700 기본)</div>
+                    <div class="tpl-meta">첫 컨택용 · 오픈율 42% · 회신율 9%</div>
+                  </div>
+                  <div class="tpl-badges"><span class="type-chip">700</span></div>
+                </div>
+                <div class="tpl-row">
+                  <span class="radio"></span>
+                  <div>
+                    <div class="tpl-name">클래스 오픈 제안 — 캠페인 연결</div>
+                    <div class="tpl-meta">캠페인 필수 · 오픈율 51% · 회신율 14%</div>
+                  </div>
+                  <div class="tpl-badges"><span class="type-chip">700</span></div>
+                </div>
+                <div class="tpl-row">
+                  <span class="radio"></span>
+                  <div>
+                    <div class="tpl-name">재컨택 리마인드</div>
+                    <div class="tpl-meta">3개월+ 무응답 대상 · 회신율 18%</div>
+                  </div>
+                  <div class="tpl-badges"><span class="type-chip">BDC</span></div>
+                </div>
+                <div class="tpl-row">
+                  <span class="radio"></span>
+                  <div>
+                    <div class="tpl-name">미팅 제안 (Calendly)</div>
+                    <div class="tpl-meta">회신자 대상 · 미팅 전환율 31%</div>
+                  </div>
+                  <div class="tpl-badges"><span class="type-chip">프리미엄</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">미리보기</div>
+                <div class="card-head-action">✏ 이 발송만 수정</div>
+              </div>
+              <hr class="card-hr">
+              <div class="card-body">
+                <div class="pv-meta"><span class="k">보내는 사람</span><span class="v">클래스101 크리에이터 파트너십 &lt;partner@101.inc&gt;</span></div>
+                <div class="pv-meta"><span class="k">제목</span><span class="v">[클래스101] <span class="var-chip">{활동명}</span>님, 함께할 클래스를 제안드려요</span></div>
+                <div class="pv-body">
+                  <p>안녕하세요 <span class="var-chip">{활동명}</span>님, 클래스101 크리에이터 파트너십 팀 <span class="var-chip">{담당자명}</span>입니다.</p>
+                  <p><span class="var-chip">{채널명}</span> 채널의 콘텐츠를 인상 깊게 보고 있습니다. <span class="var-chip">{활동명}</span>님의 노하우를 온라인 클래스로 만들면 좋겠다고 판단해 제안드립니다.</p>
+                  <p>클래스101은 기획부터 촬영, 판매까지 전 과정을 함께합니다. 관심 있으시면 이 메일에 회신 주세요. 상세 조건과 정산 구조를 안내드리겠습니다.</p>
+                  <p>감사합니다.<br>클래스101 크리에이터 파트너십 팀 드림</p>
+                </div>
+                <div class="hint">파란 칩은 치환 변수입니다. 발송 시 수신자별 소싱 데이터로 자동 치환됩니다.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 보조 4fr: 발송 대상 + 옵션 -->
+          <div class="col-4">
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">발송 대상 <span class="cnt">(그룹 2)</span></div>
+              </div>
+              <hr class="card-hr">
+              <div class="card-body">
+                <div class="kv"><span class="kv-k">드로잉 6월 신규 소싱</span><span class="kv-v">48명</span></div>
+                <div class="kv"><span class="kv-k">재테크 상위 풀</span><span class="kv-v">32명</span></div>
+                <div class="kv"><span class="kv-k">중복 제외</span><span class="kv-v dim">−2명</span></div>
+                <div class="kv"><span class="kv-k">수신거부 제외</span><span class="kv-v dim">−3명</span></div>
+                <div class="kv"><span class="kv-k">이메일 없음 제외</span><span class="kv-v dim">−5명</span></div>
+                <div class="kv-total"><span class="kv-k">발송 수신자</span><span class="kv-v">70명 <span class="badge-success">검증됨</span></span></div>
+                <div class="hint">수신거부 이력은 소싱 통합 DB의 상태 값 기준으로 자동 제외됩니다.</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">발송 옵션</div>
+              </div>
+              <hr class="card-hr">
+              <div class="card-body">
+                <div class="opt-row"><span class="radio on"></span><span class="lbl">즉시 발송</span></div>
+                <div class="opt-row"><span class="radio"></span><span class="lbl">예약 발송</span><span class="cap">날짜·시간 지정</span></div>
+                <div class="field">
+                  <div class="field-label">발신 계정</div>
+                  <div class="input select"><span>partner@101.inc (공용)</span><span class="chev">▾</span></div>
+                </div>
+                <div class="hint">발송 결과와 오픈·회신 지표는 각 소싱 건의 컨택 히스토리에 자동 기록됩니다.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+</body>
+</html>
