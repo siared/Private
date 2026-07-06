@@ -13,7 +13,7 @@
   그 안에서 작업할 때는 `projects/class101/CLAUDE.md`의 규칙이 항상 적용된다.
 - 다른 저장소에서 클래스101 어드민 작업을 할 때는 `class101-admin` 플러그인을 쓴다
   (설치법은 README "플러그인으로 다른 리포에서 쓰기"). 플러그인 설치가 안 된 세션이면
-  이 저장소를 세션에 추가해 `class101-admin-design` 스킬(`.claude/skills/`)을 쓴다.
+  이 저장소를 세션에 추가하면 이 CLAUDE.md와 문서 규칙이 함께 적용된다.
 - **`docs/` 또는 `tokens/`를 수정하면 반드시 `scripts/sync-plugin-refs.sh`를 실행**해
   플러그인에 번들된 사본(`plugins/class101-admin/skills/design/references/`)을
   동기화하고 함께 커밋한다.
