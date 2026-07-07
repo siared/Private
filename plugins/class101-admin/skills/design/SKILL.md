@@ -6,16 +6,19 @@ description: CLASS101(클래스101) 어드민·백오피스·관리자 화면을
 # CLASS101 어드민 디자인 스킬
 
 CLASS101 Admin Figma에서 실측 추출한 레이아웃 패턴과 디자인 토큰을 적용한다.
+**규칙은 셸·폭 패턴·토큰까지다.** 화면 안의 세부 구성(카드·셀·필드 구성)은
+화면 목적에 맞게 자유롭게 정한다.
 
 ## 1단계: 상세 스펙 읽기
 
 이 스킬 디렉토리의 `references/` 아래 두 파일이 단일 진실 공급원(source of truth)이며,
 아래 요약과 다르면 파일 쪽을 따른다:
 
-- `references/layout-patterns.md` — 셸 구조, 콘텐츠 폭 패턴 5종, 페이지 타입별 골격
+- `references/layout-patterns.md` — 셸 구조, 콘텐츠 폭 패턴 5종, 페이지 타입→폭 매핑
 - `references/tokens.md` — 컬러/타이포/radius/스페이싱 토큰
 
-(원본은 siared/Private 저장소의 `docs/`·`tokens/`이며 이 사본은 스크립트로 동기화된다.)
+(원본은 siared/Private 저장소의 `docs/`·`tokens/`이며 이 사본은 스크립트로 동기화된다.
+세부 실측 예시가 필요하면 저장소의 `docs/reference-examples.md` 참고 — 강제 아님.)
 
 ## 2단계: 핵심 규칙 (요약)
 
@@ -32,7 +35,7 @@ CLASS101 Admin Figma에서 실측 추출한 레이아웃 패턴과 디자인 토
 | 2열 4:8 | 384+40+808 | 상세(요약+메인) |
 
 **페이지 헤더**: 높이 86px, 좌측 ←+타이틀(20px Bold), 우측 버튼 그룹.
-primary(#FF5D00) 버튼은 화면당 1개. **폼의 저장/취소도 여기 배치 (하단 액션바 금지)**.
+primary(#FF5D00) 버튼은 화면당 최대 1개. **폼의 저장/취소도 여기 배치 (하단 액션바 금지)**.
 
 **스타일**: Pretendard JP, 본문 14px. 카드는 그림자 없이 헤어라인(rgba(0,0,0,0.05))
 아웃라인 + radius 16. 인풋/버튼 radius 8, 높이 38px. 상태는 색 점+텍스트 라벨 동반.
