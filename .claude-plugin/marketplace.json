@@ -13,6 +13,15 @@
       "author": {
         "name": "Sia"
       }
+    },
+    {
+      "name": "class101-admin-v2",
+      "source": "./plugins/class101-admin-v2",
+      "description": "CLASS101 어드민 디자인 패턴 v2 (독립 재작성) — Figma 패턴 원본(node 14919-97072) 실측 기반 콘텐츠 폭 5종·화면 타입 3종·토큰과 예외 승인 프로토콜을 포함한 자체 완결 design 스킬",
+      "version": "2.0.0",
+      "author": {
+        "name": "Sia"
+      }
     }
   ]
 }
