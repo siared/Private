@@ -16,12 +16,15 @@ CLASS101 어드민 디자인 패턴 스킬의 독립 재작성 버전. Figma 패
 구성:
 
 ```
-skills/design/
+skills/class101-admin-design/
   SKILL.md                     # 워크플로 + 핵심 수치 요약 + 예외 프로토콜
   references/layout.md         # 셸(헤더72/사이드바240/패딩40), 폭 패턴 5종, 페이지 헤더, 카드
   references/screen-types.md   # 목록/폼/상세 완성 골격
   references/tokens.md         # 컬러/타이포/radius/레이아웃 토큰, 컴포넌트 치수
 ```
+
+스킬 이름은 `class101-admin-design`이다 (v1의 `design`은 이름이 흔해 다른 플러그인과
+충돌 가능성이 있어 v2에서 구체적인 이름으로 변경).
 
 설치 (마켓플레이스 `class101-design` 등록됨):
 
@@ -29,4 +32,4 @@ skills/design/
 /plugin install class101-admin-v2@class101-design
 ```
 
-명시 호출: `/class101-admin-v2:design`
+명시 호출: `/class101-admin-v2:class101-admin-design`
