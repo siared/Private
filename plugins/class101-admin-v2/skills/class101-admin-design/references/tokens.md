@@ -29,6 +29,29 @@
 
 폰트 패밀리: **Pretendard JP**. letter-spacing은 폰트 크기 대비 %.
 
+### 폰트 적용 규칙 (임의 대체 금지)
+
+Figma는 폰트 이름("Pretendard JP")만 정의하고 웹 폴백·로드 방식은 정의하지 않는다.
+구현 시 아래 우선순위를 그대로 따르고, 근거 없이 다른 폰트를 고르지 않는다.
+
+1. **기존 프로젝트에 이미 로드돼 있는지 먼저 확인한다.** vibrant-ui나 class101 디자인
+   시스템을 쓰는 프로젝트라면 전역 CSS/폰트 설정에 Pretendard JP가 이미 있을 가능성이
+   높다 — `@font-face`, `next/font`, 전역 스타일시트, `tailwind.config`의 `fontFamily`
+   등을 먼저 검색(grep)하고, 있으면 그 설정을 재사용한다. 새로 import하지 않는다.
+2. **없으면 아래 폴백 스택을 그대로 쓴다** (font-family 선언):
+   ```
+   'Pretendard JP', 'Pretendard', -apple-system, BlinkMacSystemFont,
+   'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif
+   ```
+   이 스택은 Figma 실측값이 아니라 Pretendard 계열 한글 웹폰트의 표준 폴백 관례다 —
+   실제 Pretendard JP 폰트 파일/CDN 소스가 프로젝트에 없다는 뜻이므로, 결과물에
+   `TODO(브랜드): Pretendard JP 웹폰트 소스 미연결, 시스템 폰트로 폴백` 처럼 명시한다.
+3. **독립 목업(정적 HTML 등, 프로젝트 컨텍스트가 없는 경우)** 도 2번 폴백 스택을 쓰고
+   동일하게 TODO로 명시한다. Noto Sans KR, Pretendard(비-JP), 시스템 UI 폰트 등으로
+   임의 대체하지 않는다 — 폴백이 필요해도 위 스택 순서를 지킨다.
+4. 폰트 굵기(400/500/700/800)와 자간(letter-spacing %)은 위 표의 값을 그대로 적용한다
+   — 폴백 폰트로 렌더링되더라도 굵기·자간·크기·행간 수치는 원본 스펙을 유지한다.
+
 | 스타일 | 크기/행간 | 굵기 | 자간 | 용도 |
 |---|---|---|---|---|
 | Display3 | 48/60 | ExtraBold 800 | −3% | (마케팅성 대형 수치) |
