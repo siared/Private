@@ -1,0 +1,206 @@
+/* CLASS101 Vibrant Design System — Colors & Type
+   Ported from vibrant-ui/vibrant-theme. Values mirror palettes.ts + lightModeColors.ts. */
+
+/* --- Fonts --- */
+/* CLASS101 uses Pretendard JP (Korean/Japanese/Latin sans-serif) as its primary typeface.
+   Local woff2 files, 9 weights. */
+@font-face { font-family:'Pretendard JP'; font-weight:100; font-style:normal; font-display:swap;
+  src:url('fonts/PretendardJP-Thin.woff2') format('woff2'); }
+@font-face { font-family:'Pretendard JP'; font-weight:200; font-style:normal; font-display:swap;
+  src:url('fonts/PretendardJP-ExtraLight.woff2') format('woff2'); }
+@font-face { font-family:'Pretendard JP'; font-weight:300; font-style:normal; font-display:swap;
+  src:url('fonts/PretendardJP-Light.woff2') format('woff2'); }
+@font-face { font-family:'Pretendard JP'; font-weight:400; font-style:normal; font-display:swap;
+  src:url('fonts/PretendardJP-Regular.woff2') format('woff2'); }
+@font-face { font-family:'Pretendard JP'; font-weight:500; font-style:normal; font-display:swap;
+  src:url('fonts/PretendardJP-Medium.woff2') format('woff2'); }
+@font-face { font-family:'Pretendard JP'; font-weight:600; font-style:normal; font-display:swap;
+  src:url('fonts/PretendardJP-SemiBold.woff2') format('woff2'); }
+@font-face { font-family:'Pretendard JP'; font-weight:700; font-style:normal; font-display:swap;
+  src:url('fonts/PretendardJP-Bold.woff2') format('woff2'); }
+@font-face { font-family:'Pretendard JP'; font-weight:800; font-style:normal; font-display:swap;
+  src:url('fonts/PretendardJP-ExtraBold.woff2') format('woff2'); }
+@font-face { font-family:'Pretendard JP'; font-weight:900; font-style:normal; font-display:swap;
+  src:url('fonts/PretendardJP-Black.woff2') format('woff2'); }
+
+:root {
+  /* ========= Palette ========= */
+  --orange-5:#110904;  --orange-10:#1c1008; --orange-15:#371a07; --orange-20:#4f1e03;
+  --orange-25:#652300; --orange-30:#792900; --orange-35:#8e3000; --orange-40:#a33800;
+  --orange-45:#b84100; --orange-50:#cd4900; --orange-55:#e35200; --orange-60:#ff5d00;
+  --orange-65:#ff7430; --orange-70:#ff8d57; --orange-75:#ffa479; --orange-80:#fdba9a;
+  --orange-85:#fccfb9; --orange-90:#fbe2d7; --orange-95:#fcf5f1;
+
+  --blue-5:#0c0c1b;    --blue-10:#0e142a;   --blue-15:#0f204b;   --blue-20:#0d2868;
+  --blue-25:#0a3283;   --blue-30:#0d3d9c;   --blue-40:#1454d1;   --blue-50:#376dfa;
+  --blue-55:#5a7afb;   --blue-60:#788bfb;   --blue-80:#c1c4fb;   --blue-95:#f3f3fc;
+
+  --red-5:#100604;     --red-10:#200d08;    --red-15:#410b0a;    --red-40:#b40a26;
+  --red-50:#e30f32;    --red-55:#fb1239;    --red-60:#fd5b59;    --red-80:#fcb5ac;
+  --red-95:#fcf1f0;
+
+  --green-5:#040905;   --green-15:#062410;  --green-45:#06783a;  --green-50:#078641;
+  --green-60:#0ca954;  --green-80:#29e477;  --green-90:#8ffcab;  --green-95:#dbfce1;
+
+  --yellow-5:#0a0703;  --yellow-15:#2a1c07; --yellow-55:#b27307; --yellow-60:#cb8409;
+  --yellow-75:#fca50e; --yellow-80:#fdb95e; --yellow-85:#fccd95; --yellow-95:#fcf2e7;
+
+  --violet-10:#24063c; --violet-40:#8a04e4; --violet-50:#a839fd; --violet-55:#b452fe;
+  --violet-80:#e2b8fd; --violet-95:#f8f1fc;
+
+  --magenta-10:#2f0615; --magenta-45:#c80564; --magenta-55:#f7097d; --magenta-80:#fdb2c5; --magenta-95:#fcf1f3;
+
+  --neutral-5:#0c0c0c;  --neutral-10:#171717; --neutral-15:#202020; --neutral-20:#2b2b2b;
+  --neutral-25:#373737; --neutral-30:#424242; --neutral-35:#4e4e4e; --neutral-40:#5b5b5b;
+  --neutral-50:#747474; --neutral-60:#949494; --neutral-65:#9d9d9d; --neutral-70:#ababab;
+  --neutral-80:#c7c7c7; --neutral-85:#d6d6d6; --neutral-90:#e5e5e5; --neutral-95:#f3f3f3;
+
+  --white:#ffffff;
+  --black:#000000;
+
+  /* black / white alpha — most used */
+  --black-a03:#00000008; --black-a05:#0000000d; --black-a10:#0000001a; --black-a15:#00000026;
+  --black-a40:#00000066; --black-a70:#000000b2; --black-a80:#000000cc;
+  --white-a15:#ffffff26; --white-a30:#ffffff4c; --white-a70:#ffffffb2; --white-a80:#ffffffcc;
+
+  /* ========= Semantic — LIGHT MODE ========= */
+  --background: var(--white);
+  --surface1: var(--black-a03);
+  --surface2: var(--white);
+  --surface3: var(--white);
+  --surface4: var(--neutral-80);
+  --surface-regular: rgba(243,243,243,0.8);
+  --surface-thick: rgba(243,243,243,0.95);
+
+  --primary: var(--orange-60);          /* #ff5d00 — CLASS101 signature orange */
+  --primary-container: var(--orange-95);
+  --informative: var(--blue-50);
+  --informative-container: var(--blue-95);
+  --error: var(--red-50);
+  --error-container: var(--red-95);
+  --success: var(--green-50);
+  --success-container: var(--green-95);
+  --warning: var(--yellow-75);
+  --warning-container: var(--yellow-95);
+  --inverse-surface: var(--neutral-15);
+  --disable: var(--black-a10);
+
+  /* Foreground */
+  --fg1: var(--neutral-5);      /* onView1 — primary text */
+  --fg2: rgba(55,55,55,0.8);    /* onView2 — secondary */
+  --fg3: var(--neutral-60);     /* onView3 — tertiary / disabled-ish */
+  --fg-primary: var(--orange-60);
+  --fg-informative: var(--blue-50);
+  --fg-error: var(--red-50);
+  --fg-success: var(--green-50);
+  --fg-warning: var(--yellow-60);
+
+  --on-primary: var(--white);
+  --on-primary-container: var(--orange-60);
+  --on-inverse-surface: var(--neutral-95);
+
+  /* Strokes */
+  --outline1: var(--black-a05);
+  --outline2: var(--black-a10);
+  --outline-primary: var(--orange-60);
+
+  --dim: var(--black-a70);
+  --overlay: var(--black-a05);
+
+  /* Brand adaptive — plus (orange) & master (violet). */
+  --plus-vibrant: var(--orange-60);
+  --plus-soft: var(--orange-80);
+  --plus-muted: var(--orange-95);
+  --master-vibrant: var(--violet-50);
+  --master-soft: var(--violet-80);
+  --master-muted: var(--violet-95);
+
+  /* ========= Elevation ========= */
+  --elev-0: none;
+  --elev-1: 0 2px 6px rgba(0,0,0,.04), 0 2px 1px rgba(0,0,0,.04);
+  --elev-2: 0 5px 8px -1px rgba(0,0,0,.06), 0 1px 4px rgba(0,0,0,.04);
+  --elev-3: 0 20px 20px -4px rgba(0,0,0,.10), 0 12px 12px -2px rgba(0,0,0,.04), 0 2px 7px 1px rgba(0,0,0,.04);
+  --elev-4: 0 28px 28px -4px rgba(0,0,0,.16), 0 16px 16px -2px rgba(0,0,0,.06), 0 2px 8px 1px rgba(0,0,0,.04);
+
+  /* ========= Radius ========= */
+  --r-none: 0;       --r-xs: 2px;    --r-sm: 4px;     --r-md: 8px;
+  --r-lg: 12px;      --r-xl: 16px;   --r-xxl: 20px;   --r-2xl: 20px;
+  --r-3xl: 24px;     --r-4xl: 32px;  --r-5xl: 40px;   --r-6xl: 48px;
+  --r-full: 10000px;
+
+  /* ========= Typography ========= */
+  --font-family: 'Pretendard JP', Pretendard, -apple-system, BlinkMacSystemFont,
+    'Apple SD Gothic Neo', 'Noto Sans KR', 'Hiragino Sans', system-ui, sans-serif;
+
+  /* Weights */
+  --fw-regular: 400; --fw-medium: 500; --fw-semibold: 600; --fw-bold: 700; --fw-extrabold: 800;
+
+  /* Content area */
+  --content-max: 1344px;
+  --content-pad: 20px;
+
+  /* Z-index */
+  --z-bottombar: 1; --z-fab: 1; --z-dropdown: 2; --z-sheet: 2; --z-toast: 4; --z-popover: 4;
+}
+
+/* ========= Dark mode overrides ========= */
+[data-theme="dark"] {
+  --background: var(--neutral-5);
+  --surface1: rgba(255,255,255,0.05);
+  --surface2: var(--neutral-10);
+  --surface3: var(--black);
+  --surface4: var(--neutral-40);
+  --primary-container: var(--orange-10);
+  --inverse-surface: var(--neutral-95);
+  --disable: rgba(255,255,255,0.15);
+  --fg1: var(--neutral-95);
+  --fg2: rgba(243,243,243,0.65);
+  --fg3: var(--neutral-50);
+  --on-inverse-surface: var(--neutral-5);
+  --outline1: rgba(255,255,255,0.08);
+  --outline2: rgba(255,255,255,0.15);
+  --dim: var(--black-a80);
+}
+
+/* ========= Base typography ========= */
+html { font-family: var(--font-family); color: var(--fg1); background: var(--background); -webkit-font-smoothing: antialiased; }
+body { font-family: var(--font-family); color: var(--fg1); }
+
+/* Display — marketing hero / landing */
+.ty-display1 { font-size: 6rem;      line-height: 6.75rem;  letter-spacing: -2.88px; font-weight: 800; }
+.ty-display2 { font-size: 4.5rem;    line-height: 5.375rem; letter-spacing: -2.16px; font-weight: 800; }
+.ty-display3 { font-size: 3rem;      line-height: 3.75rem;  letter-spacing: -1.8px;  font-weight: 800; }
+.ty-display4 { font-size: 2.5rem;    line-height: 3.125rem; letter-spacing: -1.12px; font-weight: 800; }
+
+/* Title — section/card heads */
+.ty-title1 { font-size: 2rem;     line-height: 2.5rem;   letter-spacing: -0.768px; font-weight: 700; }
+.ty-title2 { font-size: 1.75rem;  line-height: 2.25rem;  letter-spacing: -0.616px; font-weight: 700; }
+.ty-title3 { font-size: 1.5rem;   line-height: 2rem;     letter-spacing: -0.48px;  font-weight: 700; }
+.ty-title4 { font-size: 1.25rem;  line-height: 1.625rem; letter-spacing: -0.36px;  font-weight: 700; }
+.ty-title5 { font-size: 1.125rem; line-height: 1.375rem; letter-spacing: -0.288px; font-weight: 600; }
+.ty-title6 { font-size: 1rem;     line-height: 1.25rem;  letter-spacing: -0.24px;  font-weight: 600; }
+.ty-title7 { font-size: 0.875rem; line-height: 1.125rem; letter-spacing: -0.168px; font-weight: 600; }
+
+/* Body — UI labels, short text */
+.ty-body1 { font-size: 1rem;     line-height: 1.25rem;  letter-spacing: -0.24px;  font-weight: 400; }
+.ty-body2 { font-size: 0.875rem; line-height: 1.125rem; letter-spacing: -0.168px; font-weight: 400; }
+.ty-body3 { font-size: 0.8125rem; line-height: 1.125rem; letter-spacing: -0.13px; font-weight: 400; }
+.ty-body4 { font-size: 0.75rem;  line-height: 1rem;     letter-spacing: -0.12px;  font-weight: 400; }
+.ty-body5 { font-size: 0.6875rem; line-height: 0.875rem; font-weight: 400; }
+.ty-body6 { font-size: 0.625rem; line-height: 0.75rem;  font-weight: 400; }
+
+/* Paragraph — long-form body */
+.ty-paragraph1 { font-size: 1.25rem;   line-height: 1.75rem;   letter-spacing: -0.4px;   font-weight: 400; }
+.ty-paragraph2 { font-size: 1.125rem;  line-height: 1.625rem;  letter-spacing: -0.27px;  font-weight: 400; }
+.ty-paragraph3 { font-size: 0.9375rem; line-height: 1.3125rem; letter-spacing: -0.21px;  font-weight: 400; }
+.ty-paragraph4 { font-size: 0.875rem;  line-height: 1.25rem;   letter-spacing: -0.168px; font-weight: 400; }
+
+/* Semantic tags */
+h1 { font-size: 2rem;     line-height: 2.5rem;   letter-spacing: -0.768px; font-weight: 700; margin: 0; }
+h2 { font-size: 1.75rem;  line-height: 2.25rem;  letter-spacing: -0.616px; font-weight: 700; margin: 0; }
+h3 { font-size: 1.5rem;   line-height: 2rem;     letter-spacing: -0.48px;  font-weight: 700; margin: 0; }
+h4 { font-size: 1.25rem;  line-height: 1.625rem; letter-spacing: -0.36px;  font-weight: 700; margin: 0; }
+h5 { font-size: 1.125rem; line-height: 1.375rem; letter-spacing: -0.288px; font-weight: 600; margin: 0; }
+h6 { font-size: 1rem;     line-height: 1.25rem;  letter-spacing: -0.24px;  font-weight: 600; margin: 0; }
+p  { font-size: 0.9375rem; line-height: 1.3125rem; letter-spacing: -0.21px; margin: 0; color: var(--fg2); }
+small { font-size: 0.75rem; line-height: 1rem; letter-spacing: -0.12px; color: var(--fg3); }

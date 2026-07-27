@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>T5 · 미팅 전 안내 AS-IS / TO-BE</title>
+<link rel="stylesheet" href="./vibrant-ds/colors_and_type.css"/>
+<style>
+:root { --ink:#171717; --mute:#747474; --line:#e5e5e5; --biz:#ff5d00; --biz-soft:#fcf5f1; --sa:#376dfa; --sa-soft:#f3f3fc; --ok:#078641; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:'Pretendard JP',Pretendard,-apple-system,sans-serif; color:var(--ink); background:#f3f3f3; }
+.bar { background:#fff; border-bottom:1px solid var(--line); padding:10px 16px; display:flex; gap:10px; align-items:center; font-size:12px; flex-wrap:wrap; position:sticky; top:0; z-index:30; }
+.bar a { color:var(--sa); text-decoration:none; }
+.flow-nav { margin-left:auto; display:flex; gap:8px; }
+.flow-nav a { font-weight:650; padding:4px 8px; border-radius:8px; background:#f3f3f3; }
+.pill { background:#111; color:#fff; padding:2px 8px; border-radius:99px; font-weight:650; }
+.wrap { max-width:980px; margin:0 auto; padding:18px 16px 110px; }
+h1 { font-size:22px; margin:0 0 6px; }
+.lead { color:var(--mute); font-size:13.5px; margin:0 0 14px; line-height:1.5; }
+.policy {
+  background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:14px;
+  font-size:13px; line-height:1.5;
+}
+.policy b { color:var(--biz); }
+.policy ul { margin:8px 0 0; padding-left:18px; }
+.tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+.tabs button {
+  border:1px solid var(--line); background:#fff; border-radius:99px; padding:7px 12px;
+  font:inherit; font-size:12.5px; cursor:pointer;
+}
+.tabs button.on { background:#111; color:#fff; border-color:#111; }
+.pane { display:none; }
+.pane.on { display:block; }
+.compare { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media(max-width:860px){ .compare{ grid-template-columns:1fr; } }
+.col {
+  background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px; position:relative;
+}
+.col.asis { border-top:3px solid #999; }
+.col.tobe { border-top:3px solid var(--biz); background:#fffdfb; }
+.lbl { font-size:11px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; margin-bottom:8px; }
+.col.asis .lbl { color:#666; }
+.col.tobe .lbl { color:var(--biz); }
+.h { font-size:14px; font-weight:750; margin:0 0 8px; }
+.sub { font-size:12px; color:var(--mute); margin-bottom:10px; line-height:1.45; }
+.mail {
+  font-size:13.5px; line-height:1.55; white-space:pre-wrap; word-break:break-word;
+  background:#f7f7f7; border-radius:12px; padding:12px 14px; margin-bottom:10px;
+}
+.sms {
+  font-size:12.5px; line-height:1.5; white-space:pre-wrap;
+  background:#eef6ff; border-radius:12px; padding:10px 12px; margin-bottom:8px;
+}
+.sms:empty, .sms.empty { display:none; }
+ul.chg { margin:0; padding-left:18px; font-size:13px; line-height:1.5; }
+.ask { margin-top:12px; font-size:12.5px; color:var(--mute); background:var(--sa-soft); border-radius:10px; padding:10px 12px; }
+.src { font-size:11.5px; color:var(--mute); margin-top:16px; }
+.ch { display:inline-block; font-size:11px; font-weight:700; padding:2px 7px; border-radius:99px; background:#f3f3f3; margin-right:4px; }
+</style>
+</head>
+<body>
+<div class="bar">
+  <a href="./index.html">← 플로우</a>
+  <span class="pill">3 · 안내 메일</span>
+  <span>AS-IS 템플릿 ↔ TO-BE</span>
+  <span class="flow-nav">
+    <a href="./calendar.html">← 캘린더</a>
+    <a href="./premeeting.html?tracking_code=TRK-DEMO-20260722">다음: 랜딩 →</a>
+  </span>
+</div>
+<div class="wrap">
+  <h1>미팅 전 안내 · AS-IS / TO-BE</h1>
+  <p class="lead">
+    왼쪽은 Ops Flow에 적힌 <b>현재 리마인드 메일/문자 원문</b>(from: review@101.inc).
+    오른쪽은 담당자 from · 랜딩 CTA · 커리 생성 시점 TO-BE. 각 칸에 의견 달아 주세요.
+  </p>
+  <div class="policy" id="policy" data-comment-anchor="remind-policy"></div>
+  <div class="tabs" id="tabs"></div>
+  <div id="panes"></div>
+  <p class="src">출처: ops-flow.html · REPLY_REMINDERS (D-3 / D-1 / 당일 / −1h / −5m …)</p>
+</div>
+
+<script src="./meeting-reminders.js"></script>
+<script src="./mail-tobe.js"></script>
+<script>
+function esc(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+const FOCUS = ['d3','d1','day','h1','m5']; // user-requested timings (+show booked as context)
+const ORDER = ['booked', ...FOCUS];
+const all = window.MEETING_REMINDERS || [];
+const byId = Object.fromEntries(all.map(r => [r.id, r]));
+const tobeRoot = window.REMIND_TOBE || { policy: { bullets: [] }, byId: {} };
+
+document.getElementById('policy').innerHTML = `
+  <b>${esc(tobeRoot.policy.title)}</b>
+  <ul>${tobeRoot.policy.bullets.map(b => `<li>${esc(b)}</li>`).join('')}</ul>
+`;
+
+const tabs = document.getElementById('tabs');
+const panes = document.getElementById('panes');
+
+ORDER.forEach((id, i) => {
+  const r = byId[id];
+  if (!r) return;
+  const tb = tobeRoot.byId[id] || {};
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = r.when;
+  if (i === 1) btn.classList.add('on'); // default D-3
+  btn.addEventListener('click', () => show(id));
+  tabs.appendChild(btn);
+
+  const pane = document.createElement('div');
+  pane.className = 'pane' + (i === 1 ? ' on' : '');
+  pane.dataset.id = id;
+  pane.innerHTML = `
+    <div class="compare">
+      <section class="col asis" data-comment-anchor="remind-${id}-asis">
+        <div class="lbl">AS-IS · 현재 템플릿</div>
+        <div class="h">${esc(r.when)}</div>
+        <div class="sub">
+          ${(r.channels||[]).map(c => `<span class="ch">${esc(c)}</span>`).join('')}
+          ${esc(r.note || '')}
+        </div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:6px">Subject</div>
+        <div class="mail" style="margin-bottom:10px">${esc(r.subject)}</div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:6px">Email body (원문)</div>
+        <div class="mail">${esc(r.email)}</div>
+        ${r.sms ? `<div style="font-size:12px;font-weight:700;margin:10px 0 6px">SMS (원문)</div><div class="sms">${esc(r.sms)}</div>` : ''}
+      </section>
+      <section class="col tobe" data-comment-anchor="remind-${id}-tobe">
+        <div class="lbl">TO-BE · 이렇게 바꾸자</div>
+        <div class="h">${esc(tb.summary || '의견 필요')}</div>
+        <ul class="chg">${(tb.change||['아직 TO-BE 초안 없음 · 의견을 남겨 주세요']).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+        <div class="ask">커리 생성 시점 · from · CTA(랜딩) · 채널(메일/문자)에 대해 + 핀으로 의견 주세요.</div>
+      </section>
+    </div>
+  `;
+  panes.appendChild(pane);
+});
+
+function show(id) {
+  const ids = ORDER.filter(x => byId[x]);
+  tabs.querySelectorAll('button').forEach((b, i) => {
+    b.classList.toggle('on', ids[i] === id);
+  });
+  panes.querySelectorAll('.pane').forEach(p => {
+    p.classList.toggle('on', p.dataset.id === id);
+  });
+  history.replaceState(null, '', '#' + id);
+}
+const hash = (location.hash || '').slice(1);
+if (byId[hash]) show(hash);
+</script>
+<script src="./mf-auth.js"></script>
+<script src="./comments.js"></script>
+</body>
+</html>

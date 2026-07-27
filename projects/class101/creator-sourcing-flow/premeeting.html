@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>T3 Mock · 미팅 전 랜딩 (긴 커리 + 메모)</title>
+<link rel="stylesheet" href="./vibrant-ds/colors_and_type.css"/>
+<style>
+:root { --ink:#171717; --mute:#747474; --line:#e5e5e5; --biz:#ff5d00; --biz-soft:#fcf5f1; --sa:#376dfa; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:'Pretendard JP',Pretendard,-apple-system,sans-serif; color:var(--ink); background:#f7f7f7; }
+.bar { background:#fff; border-bottom:1px solid var(--line); padding:10px 16px; display:flex; gap:10px; align-items:center; font-size:12px; flex-wrap:wrap; position:sticky; top:0; z-index:40; }
+.bar a { color:var(--sa); text-decoration:none; }
+.pill { background:#111; color:#fff; padding:2px 8px; border-radius:99px; font-weight:650; }
+.trk { font-family:ui-monospace,monospace; font-size:11px; background:#f3f3f3; padding:2px 6px; border-radius:6px; }
+.shell { max-width:1140px; margin:0 auto; padding:16px; display:grid; grid-template-columns:minmax(0,1.2fr) 340px; gap:14px; align-items:start; }
+@media(max-width:960px){ .shell{ grid-template-columns:1fr; } .right{ position:static !important; } }
+.panel { background:#fff; border:1px solid var(--line); border-radius:16px; overflow:hidden; }
+.curr { padding:18px 18px 40px; }
+.tags { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+.tag { font-size:11px; font-weight:650; color:var(--biz); background:var(--biz-soft); border-radius:99px; padding:3px 8px; }
+.cover { height:120px; border:1px dashed #d6d6d6; border-radius:12px; display:grid; place-items:center; color:var(--mute); font-size:13px; margin-bottom:12px; background:#fafafa; }
+.curr h1 { margin:0 0 12px; font-size:22px; color:var(--biz); letter-spacing:-.3px; line-height:1.3; }
+.price { background:var(--biz); color:#fff; border-radius:12px; padding:14px; display:flex; gap:16px; margin-bottom:14px; }
+.price div { flex:1; }
+.price .l { font-size:11px; opacity:.85; }
+.price .v { font-size:18px; font-weight:800; margin-top:2px; }
+.block { border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px; font-size:13px; line-height:1.55; color:#333; }
+.block h3 { margin:0 0 6px; font-size:13.5px; color:var(--ink); }
+.curr-sum { font-size:13px; margin:18px 0 10px; font-weight:650; }
+.chap {
+  border:1px solid var(--line); border-radius:12px; margin-bottom:8px; overflow:hidden;
+}
+.chap summary {
+  list-style:none; cursor:pointer; padding:12px 14px; font-weight:700; font-size:14px;
+  display:flex; justify-content:space-between; align-items:center; background:#fff;
+}
+.chap summary::-webkit-details-marker { display:none; }
+.chap summary .meta { font-size:12px; font-weight:650; color:var(--mute); }
+.chap[open] summary { border-bottom:1px solid var(--line); background:#fafafa; }
+.lessons { padding:4px 0; }
+.lesson {
+  display:flex; justify-content:space-between; gap:10px; padding:10px 14px;
+  font-size:13px; border-top:1px solid #f3f3f3;
+}
+.lesson:first-child { border-top:0; }
+.badge-min { font-size:11px; font-weight:700; color:var(--biz); background:var(--biz-soft); border-radius:99px; padding:2px 8px; white-space:nowrap; }
+
+.right { position:sticky; top:56px; display:flex; flex-direction:column; gap:12px; }
+.video { aspect-ratio:16/9; background:#111; border-radius:16px; display:grid; place-items:center; color:#fff; position:relative; }
+.video .play { width:56px; height:56px; border-radius:99px; background:var(--biz); display:grid; place-items:center; font-size:20px; cursor:pointer; }
+.video .cap { position:absolute; left:12px; bottom:12px; font-size:12px; opacity:.9; }
+.join, .memo { background:#fff; border:1px solid var(--line); border-radius:16px; padding:14px; }
+.join h3, .memo h3 { margin:0 0 6px; font-size:14px; }
+.join .when { font-size:13px; color:var(--mute); margin-bottom:12px; }
+.join button, .memo button {
+  width:100%; border:0; background:var(--biz); color:#fff; border-radius:12px;
+  padding:12px; font:inherit; font-weight:750; font-size:14px; cursor:pointer;
+}
+.join button:disabled { background:#c7c7c7; cursor:not-allowed; }
+.join .hint, .memo .hint { font-size:11.5px; color:var(--mute); margin-top:8px; line-height:1.4; }
+.memo textarea {
+  width:100%; min-height:88px; border:1px solid var(--line); border-radius:10px;
+  padding:10px; font:inherit; font-size:13px; resize:vertical; margin-bottom:8px;
+}
+.memo textarea:disabled { background:#f7f7f7; }
+.memo .saved { display:none; font-size:12px; color:#078641; font-weight:650; margin-bottom:6px; }
+.memo .saved.show { display:block; }
+.mgr { font-size:12px; }
+.mgr a { color:var(--sa); font-weight:650; }
+
+.gate {
+  position:fixed; inset:0; z-index:50; background:rgba(12,12,12,.55);
+  display:flex; align-items:center; justify-content:center; padding:20px;
+}
+.gate-card {
+  width:min(420px,100%); background:#fff; border-radius:20px; padding:22px 20px 18px;
+  box-shadow:0 20px 40px rgba(0,0,0,.25);
+}
+.gate-card .eyebrow { font-size:11px; font-weight:800; color:var(--biz); letter-spacing:.06em; text-transform:uppercase; margin-bottom:6px; }
+.gate-card h2 { margin:0 0 8px; font-size:20px; letter-spacing:-.3px; }
+.gate-card p { margin:0 0 14px; font-size:13.5px; color:var(--mute); line-height:1.45; }
+.gate-card .why { background:var(--biz-soft); border-radius:10px; padding:10px 12px; font-size:12.5px; margin-bottom:14px; line-height:1.4; }
+.gate-card button {
+  width:100%; border:0; background:var(--biz); color:#fff; border-radius:12px;
+  padding:13px; font:inherit; font-weight:750; cursor:pointer; margin-bottom:8px;
+}
+.gate-card .ghost { background:#fff; color:var(--ink); border:1px solid var(--line); }
+.blurred { filter:blur(2.5px); pointer-events:none; user-select:none; }
+.status { font-size:11.5px; color:#078641; font-weight:650; }
+</style>
+</head>
+<body>
+<div class="bar">
+  <a href="./index.html">← 플로우</a>
+  <span class="pill">4 · 랜딩</span>
+  <span style="font-size:10.5px;font-weight:750;padding:2px 7px;border-radius:6px;background:#f3f3fc;color:var(--sa);border:1px solid #c9d4ff">디자이너</span>
+  <span class="trk" id="trkLabel"></span>
+  <span class="status" id="mapStatus" style="display:none"></span>
+  <span style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
+    <a href="./remind.html" style="font-weight:650">← 안내 메일</a>
+    <a href="./meeting.html?tracking_code=TRK-DEMO-20260722" style="font-weight:650">다음: 미팅 화면 →</a>
+  </span>
+</div>
+
+<div id="app" class="shell blurred">
+  <section class="panel curr" data-comment-anchor="landing-curr">
+    <div class="tags">
+      <span class="tag">드로잉 · 디지털 드로잉 · 인물화</span>
+      <span class="tag">입문자</span>
+    </div>
+    <div class="cover">커버 이미지</div>
+    <h1>초보도 완성하는 인물 드로잉 실전 로드맵</h1>
+    <div class="price">
+      <div><div class="l">대여 5개월</div><div class="v">99,000원</div></div>
+      <div><div class="l">평생 수강</div><div class="v">149,000원</div></div>
+    </div>
+    <div class="block">
+      <h3>함께 추천하는 추가 상품</h3>
+      인물 드로잉 연습 워크북 키트 — 비율 가이드, 연습 시트, 채색 체크리스트
+    </div>
+    <div class="block">
+      <h3>시장 트렌드 및 성장성</h3>
+      인물 드로잉은 입문 수요가 꾸준하고, “얼굴이 안 닮는다”는 좌절 지점이 분명합니다. 비율·이목구비·간단한 채색까지 한 사이클로 완주시키는 구성이 판매에 유리합니다.
+    </div>
+    <div class="block">
+      <h3>셀링 포인트</h3>
+      기초 비율 → 부위별 연습 → 전신 간단 인물 → 채색까지. 매 챕터 결과물이 남아 SNS에 올리기 쉬운 짧은 완성본을 목표로 합니다.
+    </div>
+
+    <div class="curr-sum">커리큘럼 요약 · 9챕터 · 약 8시간 27분 <span style="font-weight:500;color:var(--mute)">(길어서 챕터별 접기)</span></div>
+    <div id="chaps"></div>
+  </section>
+
+  <aside class="right" data-comment-anchor="landing-right">
+    <div class="video panel" id="video">
+      <div class="play" title="재생(데모)">▶</div>
+      <div class="cap">사전 안내 영상 · 10~15분</div>
+    </div>
+    <div class="join panel">
+      <h3>미팅 참여</h3>
+      <div class="when">오늘 17:30 · 1:1 기획 · 오지원</div>
+      <button type="button" id="btnJoin" disabled>화상 미팅 참여하기</button>
+      <div class="hint">로그인 + 영상 시청 후 활성화(데모). 우측 sticky.</div>
+    </div>
+    <div class="memo panel">
+      <h3>매니저에게 메모 남기기</h3>
+      <div class="saved" id="memoSaved">저장됨 · 매니저 화면에 표시됩니다</div>
+      <textarea id="memo" placeholder="예: 채색 파트는 짧게 하고, 얼굴 비율에 시간을 더 쓰고 싶어요." disabled></textarea>
+      <button type="button" id="btnMemo" disabled>메모 저장</button>
+      <div class="hint">
+        로그인 후 저장. 매니저는
+        <span class="mgr"><a href="./meeting.html" id="mgrLink">미팅 카드+체크</a></span>에서 같은 메모를 봅니다.
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div class="gate" id="gate" data-comment-anchor="landing-login">
+  <div class="gate-card">
+    <div class="eyebrow">Creator Center · 디자인 리뷰</div>
+    <h2>미팅 자료를 보려면<br/>로그인이 필요해요</h2>
+    <p>예약 메일과 클래스101 계정을 맞춰 두면, 커리·메모·채팅이 한 계정으로 이어집니다.</p>
+    <div class="why"><b>왜 지금?</b> 보통 1~2분. 미팅 전에 한 번만 연결하면 이후 제작이 편해져요.</div>
+    <button type="button" id="btnLogin">크리에이터 센터 로그인 / 가입</button>
+    <button type="button" class="ghost" id="btnSkip">데모: 이미 로그인된 상태</button>
+  </div>
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const tracking = params.get('tracking_code') || 'TRK-DEMO-20260722';
+document.getElementById('trkLabel').textContent = 'tracking_code=' + tracking;
+document.getElementById('mgrLink').href = './meeting.html?tracking_code=' + encodeURIComponent(tracking);
+
+const chapters = [
+  ['인물 드로잉 시작하기', ['도구와 자세 잡기','간단한 얼굴 스케치','자주 하는 실수','오늘 연습 루틴'], [8,11,9,7]],
+  ['얼굴 기본 비율 팁', ['이목구비 위치','정면 비율 그리드','살짝 기울인 얼굴','연습 시트'], [10,12,11,8]],
+  ['눈·코·입 디테일', ['눈 구조','코 음영','입술 라인','부위 합치기'], [9,10,9,12]],
+  ['헤어와 윤곽', ['머리카락 큰 덩어리','윤곽 단순화','실루엣 체크','짧은 연습'], [8,9,7,10]],
+  ['상반신 간단 포즈', ['어깨·목 연결','손 넣는 위치','옷 주름 최소','포즈 3종'], [11,10,9,12]],
+  ['전신 실루엣', ['막대 인형 → 실루엣','무게중심','짧은 제스처','정리'], [10,9,11,8]],
+  ['빛과 기본 음영', ['광원 하나','면으로 나누기','대비 조절','데모'], [9,12,10,11]],
+  ['간단 채색', ['피부톤 베이스','포인트 컬러','과하지 않게','완성본'], [10,9,8,12]],
+  ['완성 · 업로드', ['최종 체크리스트','리터치','썸네일용 크롭','다음 작품 계획'], [7,9,8,10]],
+];
+const chaps = document.getElementById('chaps');
+chaps.innerHTML = chapters.map((c, i) => {
+  const [title, lessons, mins] = c;
+  const open = i === 0 ? ' open' : '';
+  const rows = lessons.map((l, j) =>
+    `<div class="lesson"><span>${i+1}-${j+1}. ${l}</span><span class="badge-min">${mins[j]}분</span></div>`
+  ).join('');
+  return `<details class="chap"${open}><summary>${i+1}. ${title}<span class="meta">${lessons.length}강</span></summary><div class="lessons">${rows}</div></details>`;
+}).join('');
+
+const key = 'meetingMemo:' + tracking;
+let loggedIn = false, watched = false;
+
+function unlock() {
+  loggedIn = true;
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('app').classList.remove('blurred');
+  document.getElementById('memo').disabled = false;
+  document.getElementById('btnMemo').disabled = false;
+  document.getElementById('mapStatus').style.display = 'inline';
+  document.getElementById('mapStatus').textContent = `매핑: ${tracking} ↔ user_id=u_demo_1029`;
+  const prev = localStorage.getItem(key);
+  if (prev) {
+    document.getElementById('memo').value = prev;
+    document.getElementById('memoSaved').classList.add('show');
+  }
+  maybeEnableJoin();
+}
+function maybeEnableJoin() {
+  document.getElementById('btnJoin').disabled = !(loggedIn && watched);
+}
+document.getElementById('btnLogin').onclick = unlock;
+document.getElementById('btnSkip').onclick = unlock;
+document.querySelector('.play').onclick = () => {
+  watched = true;
+  document.querySelector('.cap').textContent = '시청 완료(데모)';
+  maybeEnableJoin();
+};
+document.getElementById('btnMemo').onclick = () => {
+  const v = document.getElementById('memo').value.trim();
+  localStorage.setItem(key, v);
+  localStorage.setItem(key + ':meta', JSON.stringify({
+    tracking, user_id: 'u_demo_1029', manager: '오지원',
+    meeting: '2026-08-05 17:30', type: '1:1', updatedAt: new Date().toISOString(),
+  }));
+  document.getElementById('memoSaved').classList.add('show');
+};
+document.getElementById('btnJoin').onclick = () => {
+  alert('Meet 이동(데모)\n메모는 매니저 화면 + 크센 채팅에 동기화된다고 가정');
+};
+</script>
+<script src="./mf-auth.js"></script>
+<script src="./comments.js"></script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>T1 · 제안 메일 AS-IS / TO-BE</title>
+<link rel="stylesheet" href="./vibrant-ds/colors_and_type.css"/>
+<style>
+:root { --ink:#171717; --mute:#747474; --line:#e5e5e5; --biz:#ff5d00; --biz-soft:#fcf5f1; --sa:#376dfa; --sa-soft:#f3f3fc; --ok:#078641; --warn:#8e3000; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:'Pretendard JP',Pretendard,-apple-system,sans-serif; color:var(--ink); background:#f3f3f3; }
+.bar { background:#fff; border-bottom:1px solid var(--line); padding:10px 16px; display:flex; gap:10px; align-items:center; font-size:12px; flex-wrap:wrap; position:sticky; top:0; z-index:30; }
+.bar a { color:var(--sa); text-decoration:none; }
+.flow-nav { margin-left:auto; display:flex; gap:8px; }
+.flow-nav a { font-weight:650; padding:4px 8px; border-radius:8px; background:#f3f3f3; }
+.pill { background:#111; color:#fff; padding:2px 8px; border-radius:99px; font-weight:650; }
+.wrap { max-width:980px; margin:0 auto; padding:18px 16px 110px; }
+h1 { font-size:22px; margin:0 0 6px; letter-spacing:-.3px; }
+.lead { color:var(--mute); font-size:13.5px; margin:0 0 14px; line-height:1.5; }
+.policy {
+  background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:14px;
+  font-size:13px; line-height:1.5;
+}
+.policy b { color:var(--biz); }
+.policy ul { margin:8px 0 0; padding-left:18px; }
+.tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+.tabs button {
+  border:1px solid var(--line); background:#fff; border-radius:99px; padding:7px 12px;
+  font:inherit; font-size:12.5px; cursor:pointer;
+}
+.tabs button.on { background:#111; color:#fff; border-color:#111; }
+.wave { display:none; }
+.wave.on { display:block; }
+.meta {
+  display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; font-size:12px;
+}
+.chip { background:#fff; border:1px solid var(--line); border-radius:99px; padding:4px 10px; }
+.chip em { font-style:normal; color:var(--mute); }
+.compare { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media(max-width:860px){ .compare{ grid-template-columns:1fr; } }
+.col {
+  background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px; position:relative;
+}
+.col.asis { border-top:3px solid #999; }
+.col.tobe { border-top:3px solid var(--biz); background:#fffdfb; }
+.lbl {
+  font-size:11px; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+  margin-bottom:8px;
+}
+.col.asis .lbl { color:#666; }
+.col.tobe .lbl { color:var(--biz); }
+.h { font-size:14px; font-weight:750; margin:0 0 8px; }
+.kv { font-size:12.5px; line-height:1.55; margin:0 0 10px; }
+.kv dt { color:var(--mute); display:inline; }
+.kv dd { display:inline; margin:0 0 0 4px; font-weight:650; }
+.kv dd::after { content:''; display:block; margin-bottom:4px; }
+.box {
+  font-size:13px; line-height:1.5; background:#f7f7f7; border-radius:10px; padding:10px 12px; margin-bottom:10px;
+  white-space:pre-wrap; word-break:break-word;
+}
+.col.tobe .box { background:var(--biz-soft); }
+ul.chg { margin:0; padding-left:18px; font-size:13px; line-height:1.5; }
+ul.chg li { margin-bottom:4px; }
+details.prompt {
+  border:1px solid var(--line); border-radius:10px; background:#fafafa; margin-top:8px;
+}
+details.prompt summary {
+  cursor:pointer; padding:10px 12px; font-size:12.5px; font-weight:700; list-style:none;
+}
+details.prompt summary::-webkit-details-marker { display:none; }
+details.prompt pre {
+  margin:0; padding:0 12px 12px; font-size:11.5px; line-height:1.45;
+  white-space:pre-wrap; word-break:break-word; max-height:420px; overflow:auto;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace; color:#333;
+}
+.ask {
+  margin-top:12px; font-size:12.5px; color:var(--mute);
+  background:var(--sa-soft); border-radius:10px; padding:10px 12px;
+}
+.src { font-size:11.5px; color:var(--mute); margin-top:16px; }
+</style>
+</head>
+<body>
+<div class="bar">
+  <a href="./index.html">← 플로우</a>
+  <span class="pill">1 · 제안 메일</span>
+  <span>AS-IS 프롬프트 ↔ TO-BE</span>
+  <span class="flow-nav">
+    <a href="./calendar.html">다음: 캘린더 →</a>
+  </span>
+</div>
+<div class="wrap">
+  <h1>제안 메일 1~7차 · AS-IS / TO-BE</h1>
+  <p class="lead">
+    왼쪽은 <b>지금 NocoDB/운영에 올라간 프롬프트 원문</b>(<code>mail-prompts.js</code>).
+    오른쪽은 Aug 합의 TO-BE. 각 칸 <b>+</b>에 의견을 달아 주세요.
+  </p>
+
+  <div class="policy" id="policy" data-comment-anchor="mail-policy"></div>
+  <div class="tabs" id="tabs"></div>
+  <div id="waves"></div>
+  <p class="src">출처: presentations/.../mail-prompts.js · status=active · model/timing/meeting 메타 포함</p>
+</div>
+
+<script src="./mail-prompts.js"></script>
+<script src="./mail-tobe.js"></script>
+<script>
+function esc(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function extractCta(system) {
+  const m = system.match(/\[🙏[^\]]+\]/g) || system.match(/\[[📅📊][^\]]+\]/g) || [];
+  return [...new Set(m)];
+}
+function extractOptional(system) {
+  const m = system.match(/optional_info[^\\n]*/);
+  const cal = system.match(/calendly\.com\/[^\s"']+/);
+  const figma = system.includes('figma.com');
+  return { hasOptional: /optional_info/.test(system), calendly: cal ? cal[0] : null, figma };
+}
+
+const prompts = window.MAIL_PROMPTS || [];
+const tobeRoot = window.MAIL_TOBE || { policy: { bullets: [] }, waves: {} };
+
+document.getElementById('policy').innerHTML = `
+  <b>${esc(tobeRoot.policy.title)}</b>
+  <ul>${tobeRoot.policy.bullets.map(b => `<li>${esc(b)}</li>`).join('')}</ul>
+`;
+
+const tabs = document.getElementById('tabs');
+const wavesEl = document.getElementById('waves');
+
+prompts.forEach((p, i) => {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = `${p.n}차 · ${p.timing}`;
+  if (i === 0) btn.classList.add('on');
+  btn.addEventListener('click', () => show(p.n));
+  tabs.appendChild(btn);
+
+  const ctas = extractCta(p.system);
+  const opt = extractOptional(p.system);
+  const tb = tobeRoot.waves[p.n] || {};
+
+  const div = document.createElement('div');
+  div.className = 'wave' + (i === 0 ? ' on' : '');
+  div.dataset.n = p.n;
+  div.innerHTML = `
+    <div class="meta">
+      <span class="chip"><em>status</em> ${esc(p.status)}</span>
+      <span class="chip"><em>timing</em> ${esc(p.timing)}</span>
+      <span class="chip"><em>meeting</em> ${esc(p.meeting)}</span>
+      <span class="chip"><em>model</em> ${esc(p.model)} · t=${esc(p.temperature)}</span>
+    </div>
+    <div class="compare">
+      <section class="col asis" data-comment-anchor="wave-${p.n}-asis">
+        <div class="lbl">AS-IS · 현재 세팅</div>
+        <div class="h">${p.n}차 프롬프트 (원문)</div>
+        <dl class="kv">
+          <dt>미팅 링크 타입</dt><dd>${esc(p.meeting)}</dd>
+          <dt>CTA 라벨</dt><dd>${esc(ctas.join(' · ') || '(본문 구조 내 {{미팅링크}})')}</dd>
+          <dt>optional Calendly</dt><dd>${opt.calendly ? esc(opt.calendly) : '없음'}</dd>
+          <dt>Figma 장표</dt><dd>${opt.figma ? '있음 (비번 101101)' : '없음'}</dd>
+        </dl>
+        <div class="box">${esc((p.system.match(/\[[^\]]*메일 본문 구조[^\]]*\][\s\S]{0,400}/) || [p.system.slice(0, 420)])[0])}…</div>
+        <details class="prompt">
+          <summary>System 프롬프트 전문 보기 (${p.system.length.toLocaleString()}자)</summary>
+          <pre>${esc(p.system)}</pre>
+        </details>
+        <details class="prompt">
+          <summary>User 템플릿</summary>
+          <pre>${esc(p.user)}</pre>
+        </details>
+      </section>
+      <section class="col tobe" data-comment-anchor="wave-${p.n}-tobe">
+        <div class="lbl">TO-BE · 이렇게 바꾸자</div>
+        <div class="h">${esc(tb.summary || '의견 필요')}</div>
+        <dl class="kv">
+          <dt>CTA</dt><dd>${esc(tb.ctaAsis || '—')} → ${esc(tb.ctaTobe || '—')}</dd>
+          <dt>미팅</dt><dd>${esc(tb.meetingAsis || p.meeting)} → ${esc(tb.meetingTobe || '—')}</dd>
+        </dl>
+        <div style="font-size:12px;font-weight:700;margin-bottom:4px;color:var(--ok)">유지</div>
+        <ul class="chg">${(tb.keep||[]).map(x=>`<li>${esc(x)}</li>`).join('') || '<li>—</li>'}</ul>
+        <div style="font-size:12px;font-weight:700;margin:10px 0 4px;color:var(--biz)">변경</div>
+        <ul class="chg">${(tb.change||[]).map(x=>`<li>${esc(x)}</li>`).join('') || '<li>—</li>'}</ul>
+        <div class="ask">이 TO-BE에 동의 / 수정할 점 / 카피 톤 의견을 + 핀에 남겨 주세요.</div>
+      </section>
+    </div>
+  `;
+  wavesEl.appendChild(div);
+});
+
+function show(n) {
+  tabs.querySelectorAll('button').forEach((b, i) => {
+    b.classList.toggle('on', prompts[i] && prompts[i].n === n);
+  });
+  wavesEl.querySelectorAll('.wave').forEach(w => {
+    w.classList.toggle('on', Number(w.dataset.n) === n);
+  });
+  history.replaceState(null, '', '#wave-' + n);
+}
+const hashN = Number((location.hash.match(/wave-(\d+)/) || [])[1]);
+if (hashN) show(hashN);
+</script>
+<script src="./mf-auth.js"></script>
+<script src="./comments.js"></script>
+</body>
+</html>

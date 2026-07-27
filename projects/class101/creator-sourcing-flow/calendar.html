@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>T2 Mock · 미팅 예약 캘린더</title>
+<link rel="stylesheet" href="./vibrant-ds/colors_and_type.css"/>
+<style>
+:root { --ink:#171717; --mute:#747474; --line:#e5e5e5; --biz:#ff5d00; --biz-soft:#fcf5f1; --cream:#faf6f1; --sa:#376dfa; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:'Pretendard JP',Pretendard,-apple-system,sans-serif; color:var(--ink); background:var(--cream); min-height:100vh; }
+.bar { background:#fff; border-bottom:1px solid var(--line); padding:10px 16px; display:flex; gap:10px; align-items:center; font-size:12px; }
+.bar a { color:var(--sa); text-decoration:none; }
+.bar .pill { background:#111; color:#fff; padding:2px 8px; border-radius:99px; font-weight:650; }
+.layout { display:grid; grid-template-columns:280px 1fr 300px; min-height:calc(100vh - 42px); }
+@media(max-width:960px){ .layout{ grid-template-columns:1fr; } }
+.col { padding:24px 20px; border-right:1px solid #eadfd4; }
+.col:last-child { border-right:0; background:#fff; }
+.logo { font-weight:800; font-size:13px; letter-spacing:.04em; margin-bottom:16px; }
+h1 { font-size:22px; margin:0 0 12px; letter-spacing:-.3px; }
+.meta { display:flex; flex-direction:column; gap:10px; font-size:13px; color:var(--mute); margin-bottom:18px; }
+.meta b { color:var(--ink); }
+.box { background:#fff; border:1px solid #eadfd4; border-radius:12px; padding:12px 14px; font-size:13px; line-height:1.45; margin-bottom:12px; }
+.box h3 { margin:0 0 6px; font-size:13px; color:var(--biz); }
+.cal h2 { font-size:15px; margin:0 0 12px; }
+.months { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media(max-width:960px){ .months{ grid-template-columns:1fr; } }
+.month { background:#fff; border:1px solid #eadfd4; border-radius:12px; padding:12px; }
+.month .name { font-weight:700; margin-bottom:8px; font-size:13px; }
+.days { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-align:center; font-size:12px; }
+.days .hd { color:var(--mute); font-weight:650; padding:4px 0; }
+.day { padding:8px 0; border-radius:99px; cursor:pointer; border:1.5px solid transparent; }
+.day.avail { border-color:var(--biz); color:var(--biz); font-weight:650; }
+.day.sel { background:var(--biz); color:#fff; border-color:var(--biz); }
+.day.mute { color:#c7c7c7; pointer-events:none; }
+.slots h2 { font-size:14px; margin:0 0 4px; }
+.slots .sub { font-size:12px; color:var(--mute); margin-bottom:14px; }
+.group { margin-bottom:18px; }
+.group .gh { font-size:12px; font-weight:750; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+.group .gh .dot { width:8px; height:8px; border-radius:99px; }
+.group.one .dot { background:var(--sa); }
+.group.many .dot { background:var(--biz); }
+.slot { width:100%; text-align:left; border:1px solid var(--line); background:#fff; border-radius:10px; padding:10px 12px; margin-bottom:6px; cursor:pointer; font:inherit; font-size:13px; display:flex; justify-content:space-between; }
+.slot:hover, .slot.on { border-color:var(--biz); background:var(--biz-soft); }
+.slot .cap { color:var(--mute); font-size:12px; }
+.confirm { margin-top:16px; width:100%; border:0; background:var(--biz); color:#fff; border-radius:12px; padding:12px; font:inherit; font-weight:700; cursor:pointer; }
+.confirm:disabled { opacity:.4; cursor:not-allowed; }
+.toast { display:none; margin-top:10px; font-size:12.5px; color:#078641; font-weight:650; }
+</style>
+</head>
+<body>
+<div class="bar">
+  <a href="./index.html">← 플로우</a>
+  <span class="pill">2 · 캘린더</span>
+  <span>문구·구성 의견</span>
+  <span style="margin-left:auto;display:flex;gap:8px">
+    <a href="./mail.html" style="font-weight:650">← 메일</a>
+    <a href="./remind.html" style="font-weight:650">다음: 안내 메일 →</a>
+  </span>
+</div>
+<div class="layout">
+  <aside class="col" data-comment-anchor="cal-copy">
+    <div class="logo">101 CLASS101</div>
+    <h1>강의 제작 미팅</h1>
+    <div class="meta">
+      <div>⏱ 1:1 기획 <b>15분</b> · 설명회 <b>~40분</b></div>
+      <div>📹 Google Meet</div>
+    </div>
+    <div class="box">
+      <h3>1:1 기획 미팅</h3>
+      담당자와 커리큘럼·방향을 15분 동안 깊게 논의합니다. BD가 진행합니다.
+    </div>
+    <div class="box">
+      <h3>1:다 설명회</h3>
+      제작·정산·판매·혜택 등 클래스101 프로세스를 여러 크리에이터와 함께 듣습니다. (1:4~10)
+    </div>
+    <div class="box" style="background:var(--biz-soft);border-color:#fdba9a">
+      같은 날짜라도 오른쪽에서 <b>타입별 슬롯</b>. 메일 CTA는 이 링크 1개.
+      <div style="margin-top:8px;font-size:12px;color:var(--mute)">← 좌측 문구·구성에 의견 달기 (+)</div>
+    </div>
+  </aside>
+  <section class="col cal" data-comment-anchor="cal-dates">
+    <h2>날짜와 시간을 선택하세요</h2>
+    <div class="months">
+      <div class="month">
+        <div class="name">2026년 8월</div>
+        <div class="days" id="aug"></div>
+      </div>
+      <div class="month">
+        <div class="name">2026년 9월</div>
+        <div class="days" id="sep"></div>
+      </div>
+    </div>
+  </section>
+  <section class="col slots" data-comment-anchor="cal-slots">
+    <h2 id="dateLabel">날짜를 선택하세요</h2>
+    <div class="sub">가능 시간이 타입별로 나뉩니다 · 슬롯 UI에 의견 (+)</div>
+    <div id="slotPanel" style="opacity:.4;pointer-events:none">
+      <div class="group one">
+        <div class="gh"><span class="dot"></span>1:1 기획 미팅 (15분)</div>
+        <button type="button" class="slot" data-type="1:1" data-t="10:30"><span>10:30</span><span class="cap">0/1</span></button>
+        <button type="button" class="slot" data-type="1:1" data-t="14:00"><span>14:00</span><span class="cap">0/1</span></button>
+        <button type="button" class="slot" data-type="1:1" data-t="16:30"><span>16:30</span><span class="cap">0/1</span></button>
+        <button type="button" class="slot" data-type="1:1" data-t="20:00"><span>20:00</span><span class="cap">0/1</span></button>
+      </div>
+      <div class="group many">
+        <div class="gh"><span class="dot"></span>1:다 설명회 (약 40분 · 최대 5명)</div>
+        <button type="button" class="slot" data-type="설명회" data-t="11:00"><span>11:00</span><span class="cap">2/5</span></button>
+        <button type="button" class="slot" data-type="설명회" data-t="15:00"><span>15:00</span><span class="cap">0/5</span></button>
+        <button type="button" class="slot" data-type="설명회" data-t="19:00"><span>19:00</span><span class="cap">1/5</span></button>
+      </div>
+      <button type="button" class="confirm" id="confirm" disabled>이 시간으로 예약</button>
+      <div class="toast" id="toast"></div>
+    </div>
+  </section>
+</div>
+<script>
+function renderMonth(el, year, month, availDays) {
+  const first = new Date(year, month-1, 1).getDay();
+  const dim = new Date(year, month, 0).getDate();
+  const labels = ['일','월','화','수','목','금','토'];
+  let html = labels.map(l => `<div class="hd">${l}</div>`).join('');
+  for (let i=0;i<first;i++) html += `<div class="day mute"></div>`;
+  for (let d=1;d<=dim;d++) {
+    const ok = availDays.includes(d);
+    html += `<div class="day ${ok?'avail':''}" data-y="${year}" data-m="${month}" data-d="${d}">${d}</div>`;
+  }
+  el.innerHTML = html;
+}
+renderMonth(document.getElementById('aug'), 2026, 8, [3,4,5,6,7,10,11,12,13,14,17,18,19,20,21]);
+renderMonth(document.getElementById('sep'), 2026, 9, [1,2,3,4,7,8,9,10,11]);
+
+let selected = null, slot = null;
+document.querySelectorAll('.day.avail').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.day.sel').forEach(x => x.classList.remove('sel'));
+    el.classList.add('sel');
+    selected = `${el.dataset.y}-${el.dataset.m.padStart?.(2,'0') || String(el.dataset.m).padStart(2,'0')}-${String(el.dataset.d).padStart(2,'0')}`;
+    document.getElementById('dateLabel').textContent = selected + ' 예약 가능 시간';
+    document.getElementById('slotPanel').style.opacity = '1';
+    document.getElementById('slotPanel').style.pointerEvents = 'auto';
+    document.querySelectorAll('.slot.on').forEach(x => x.classList.remove('on'));
+    slot = null;
+    document.getElementById('confirm').disabled = true;
+  });
+});
+document.querySelectorAll('.slot').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.slot.on').forEach(x => x.classList.remove('on'));
+    btn.classList.add('on');
+    slot = { type: btn.dataset.type, t: btn.dataset.t };
+    document.getElementById('confirm').disabled = false;
+  });
+});
+document.getElementById('confirm').addEventListener('click', () => {
+  const t = document.getElementById('toast');
+  t.style.display = 'block';
+  t.textContent = `예약(데모): ${selected} ${slot.t} · ${slot.type} → 이후 미팅 전 랜딩으로 tracking_code 전달`;
+});
+</script>
+<script src="./mf-auth.js"></script>
+<script src="./comments.js"></script>
+</body>
+</html>
