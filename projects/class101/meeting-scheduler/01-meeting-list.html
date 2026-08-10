@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>미팅 관리 — 메인 (목록 / 1열 full-width)</title>
+<style>
+/* ============================================================
+   CLASS101 Admin — 미팅 예약 / 메인 화면
+   페이지 타입: 목록·대시보드 → 1열 full-width (콘텐츠 1600 @1920)
+   토큰: tokens/tokens.md (vibrant-ui)
+   TODO(브랜드): Pretendard JP 웹폰트 소스 미연결, 시스템 폰트로 폴백
+   ============================================================ */
+:root{
+  --primary:#FF5D00; --on-primary:#FFFFFF; --bg:#FFFFFF;
+  --surface1:rgba(0,0,0,0.03); --surface4:#C7C7C7;
+  --onview1:#0C0C0C; --onview2:rgba(55,55,55,0.8); --onview3:#949494;
+  --outline1:rgba(0,0,0,0.05); --outline2:rgba(0,0,0,0.10);
+  --neutral-muted:#F3F3F3;
+  --success-bg:#DBFCE1; --success-fg:#078641;
+  --info-bg:#F3F3FC; --blue:#376DFA; --blue-dark:#1454D1;
+  --inverse:#202020; --on-inverse:#F3F3F3;
+  --text-secondary:#616161;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Pretendard JP','Pretendard',-apple-system,BlinkMacSystemFont,'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+  font-feature-settings:"case" 1,"ss02" 1;
+  color:var(--onview1); background:var(--bg);
+  font-size:14px; line-height:18px; letter-spacing:-0.168px;
+}
+button{font:inherit;letter-spacing:inherit;cursor:pointer;background:none;border:none;color:inherit}
+input{font:inherit;letter-spacing:inherit;color:inherit}
+
+/* ---------- 타이포 ---------- */
+.title3{font-size:24px;line-height:32px;font-weight:700;letter-spacing:-0.48px}
+.title4{font-size:20px;line-height:26px;font-weight:700;letter-spacing:-0.36px}
+.title7{font-size:14px;line-height:18px;font-weight:700;letter-spacing:-0.168px}
+.body3{font-size:13px;line-height:18px;font-weight:500;letter-spacing:-0.13px}
+.body4{font-size:12px;line-height:16px;letter-spacing:-0.12px}
+
+/* ---------- 셸: 헤더 72 / 사이드바 240 / 콘텐츠 패딩 40 ---------- */
+.admin-header{
+  position:sticky;top:0;z-index:50;height:72px;background:var(--bg);
+  border-bottom:1px solid var(--outline1);
+  display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+}
+.header-left{display:flex;align-items:center;gap:20px}
+.icon-btn{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.icon-btn:hover{background:var(--neutral-muted)}
+.logo{font-size:18px;font-weight:800;letter-spacing:-0.29px}
+.logo em{font-style:normal;color:var(--primary)}
+.header-right{display:flex;align-items:center;gap:20px}
+.status-pill{
+  display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10000px;
+  background:var(--success-bg);border:1px solid var(--outline1);
+  color:var(--success-fg);font-size:12px;line-height:16px;font-weight:500;letter-spacing:-0.12px;
+}
+.status-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--success-fg)}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--neutral-muted);
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--onview2)}
+
+.layout{display:flex;align-items:stretch;min-height:calc(100vh - 72px)}
+.sidenav{width:240px;flex:none;background:var(--bg);padding:12px;border-right:1px solid var(--outline1)}
+.nav-subtitle{height:40px;display:flex;align-items:flex-end;padding:0 12px 8px;
+  font-size:12px;line-height:16px;letter-spacing:-0.12px;color:var(--onview3)}
+.nav-item{height:44px;display:flex;align-items:center;gap:10px;padding:0 12px;border-radius:8px;
+  font-size:14px;line-height:18px;letter-spacing:-0.168px;color:var(--onview2);cursor:pointer}
+.nav-item:hover{background:var(--surface1)}
+.nav-item.active{background:var(--neutral-muted);color:var(--onview1);font-weight:700}
+.nav-item svg{flex:none;color:var(--onview3)}
+.nav-item.active svg{color:var(--onview1)}
+
+.content-area{flex:1;min-width:0;background:var(--bg)}
+/* 1열 full-width: 컨테이너 = 콘텐츠 영역 전체, 좌우 패딩 40 → 콘텐츠 1600 @1920 */
+.container-full{width:100%;padding:0 40px 60px}
+
+/* ---------- 페이지 헤더 ---------- */
+.page-header{padding:20px 0;display:flex;align-items:center;justify-content:space-between}
+.page-header .btn-group{display:flex;gap:8px}
+
+/* ---------- 버튼 (ContainedButton md h38) ---------- */
+.btn{height:38px;padding:0 16px;border-radius:8px;font-size:14px;font-weight:500;letter-spacing:-0.168px;
+  display:inline-flex;align-items:center;gap:6px;justify-content:center}
+.btn-primary{background:var(--primary);color:var(--on-primary);font-weight:700}
+.btn-primary:hover{filter:brightness(0.95)}
+.btn-tertiary{background:var(--neutral-muted);color:var(--onview1)}
+.btn-outlined{background:var(--bg);border:1px solid var(--outline2)}
+.btn-ghost-sm{height:30px;padding:0 8px;border-radius:6px;font-size:13px;letter-spacing:-0.13px;color:var(--text-secondary)}
+.btn-ghost-sm:hover{background:var(--surface1)}
+
+/* ---------- 카드 ---------- */
+.card{background:var(--bg);border:1px solid var(--outline2);border-radius:8px}
+.card-header{padding:20px;display:flex;align-items:center;justify-content:space-between}
+.card-header .desc{margin-top:2px;font-size:12px;line-height:16px;letter-spacing:-0.12px;color:var(--onview3);font-weight:400}
+
+/* ---------- Stats Bar (h90) ---------- */
+.stats-bar{display:flex;align-items:stretch;height:90px;margin-bottom:28px}
+.time-picker{width:122px;flex:none;display:flex;align-items:center;justify-content:space-between;
+  padding:0 12px;border-right:1px solid var(--outline2);font-size:13px;font-weight:500;letter-spacing:-0.13px;cursor:pointer}
+.stat-cell{flex:1;padding:16px;display:flex;flex-direction:column;gap:8px;position:relative}
+.stat-cell + .stat-cell::before{content:"";position:absolute;left:0;top:16px;bottom:16px;width:1px;background:var(--outline2)}
+.stat-label{font-size:13px;line-height:18px;font-weight:500;letter-spacing:-0.13px;color:var(--onview3)}
+.stat-value{font-size:24px;line-height:32px;font-weight:700;letter-spacing:-0.48px}
+.stat-value .delta{font-size:12px;line-height:16px;font-weight:500;letter-spacing:-0.12px;color:var(--success-fg);margin-left:6px}
+
+/* ---------- 다가오는 확정 일정 (List Item Group) ---------- */
+.list-body{padding:0 12px 12px}
+.list-item{height:36px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 8px;border-radius:6px}
+.list-item:hover{background:var(--surface1)}
+.li-left{display:flex;align-items:center;gap:12px;min-width:0}
+.li-time{width:150px;flex:none;font-size:13px;font-weight:700;letter-spacing:-0.13px}
+.li-title{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li-meta{color:var(--onview3);font-size:13px;letter-spacing:-0.13px;white-space:nowrap}
+.badge{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:10000px;
+  font-size:12px;font-weight:500;letter-spacing:-0.12px}
+.badge-online{background:var(--info-bg);color:var(--blue-dark)}
+.badge-offline{background:var(--neutral-muted);color:var(--onview2)}
+.badge-active{background:var(--success-bg);color:var(--success-fg)}
+.badge-inactive{background:var(--neutral-muted);color:var(--onview3)}
+
+/* ---------- 테이블 (vibrant-ui Table 목업) ---------- */
+.table-card{margin-top:28px}
+.table-toolbar{padding:20px 20px 0}
+.search-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.search-field{width:400px;height:38px;border:1px solid var(--outline2);border-radius:8px;
+  display:flex;align-items:center;gap:8px;padding:0 12px;color:var(--onview3)}
+.search-field input{border:none;outline:none;flex:1;background:transparent;font-size:14px}
+.search-field input::placeholder{color:var(--onview3)}
+.filter-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.chip-group{display:flex;gap:8px}
+.chip{height:38px;padding:0 14px;border-radius:10000px;border:1px solid var(--outline2);
+  display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;letter-spacing:-0.13px;color:var(--onview2)}
+.chip.selected{border-color:var(--onview1);background:var(--neutral-muted);color:var(--onview1)}
+table{width:100%;border-collapse:collapse}
+thead th{height:44px;background:var(--surface1);text-align:left;padding:0 20px;
+  font-size:13px;font-weight:500;letter-spacing:-0.13px;color:var(--onview2);white-space:nowrap}
+tbody td{height:44px;padding:0 20px;border-top:1px solid var(--outline1);white-space:nowrap}
+tbody tr:hover{background:var(--surface1)}
+td .cell-main{font-weight:500}
+td .muted{color:var(--onview3)}
+.link{color:var(--blue-dark);font-weight:500;cursor:pointer}
+/* 토글 (활성/비활성) */
+.toggle{width:36px;height:20px;border-radius:10000px;background:var(--surface4);position:relative;display:inline-block;vertical-align:middle;cursor:pointer}
+.toggle::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff}
+.toggle.on{background:var(--primary)}
+.toggle.on::after{left:auto;right:2px}
+.table-footer{height:38px;margin:12px 20px 20px;display:flex;align-items:center;justify-content:space-between;color:var(--onview3);font-size:13px;letter-spacing:-0.13px}
+.pagination{display:flex;gap:4px}
+.page-btn{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--onview2)}
+.page-btn.current{background:var(--neutral-muted);font-weight:700;color:var(--onview1)}
+
+/* ---------- 생성 완료 토스트 (inverseSurface) ---------- */
+.toast{position:fixed;right:40px;bottom:40px;z-index:60;background:var(--inverse);color:var(--on-inverse);
+  border-radius:8px;padding:14px 18px;display:flex;align-items:center;gap:10px;font-size:14px;letter-spacing:-0.168px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+.toast .check{width:20px;height:20px;border-radius:50%;background:var(--success-fg);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:12px;flex:none}
+</style>
+</head>
+<body>
+
+<!-- ===== Admin Header (h72) ===== -->
+<header class="admin-header">
+  <div class="header-left">
+    <button class="icon-btn" aria-label="사이드바 접기">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2.5" y="3.5" width="15" height="13" rx="2" stroke="#616161" stroke-width="1.5"/><path d="M7.5 3.5v13" stroke="#616161" stroke-width="1.5"/><path d="M13.5 8l-2 2 2 2" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="logo">CLASS<em>101</em> Admin</div>
+  </div>
+  <div class="header-right">
+    <div class="status-pill"><span class="dot"></span>구글 캘린더 연동됨</div>
+    <div class="avatar">김</div>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- ===== Side Navigation (w240) ===== -->
+  <nav class="sidenav">
+    <div class="nav-subtitle">미팅 예약</div>
+    <div class="nav-item active">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="3" width="14" height="12.5" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M2 7h14M6 1.5v3M12 1.5v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      미팅 관리
+    </div>
+    <div class="nav-item">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 4.5h12M3 9h12M3 13.5h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      예약 현황
+    </div>
+    <div class="nav-item">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M7.5 10.5a3 3 0 004.2.3l2.4-2.4a3 3 0 00-4.2-4.2l-1.2 1.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M10.5 7.5a3 3 0 00-4.2-.3L3.9 9.6a3 3 0 004.2 4.2l1.2-1.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      캘린더 연동
+    </div>
+    <div class="nav-subtitle">설정</div>
+    <div class="nav-item">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M9 2v2M9 14v2M2 9h2M14 9h2M4.2 4.2l1.4 1.4M12.4 12.4l1.4 1.4M13.8 4.2l-1.4 1.4M5.6 12.4l-1.4 1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      알림 설정
+    </div>
+  </nav>
+
+  <!-- ===== 콘텐츠 영역: 1열 full-width ===== -->
+  <main class="content-area">
+    <div class="container-full">
+
+      <!-- 페이지 헤더 -->
+      <div class="page-header">
+        <h1 class="title4">미팅 관리</h1>
+        <div class="btn-group">
+          <button class="btn btn-tertiary">공유 링크 관리</button>
+          <button class="btn btn-primary">＋ 새 미팅 만들기</button>
+        </div>
+      </div>
+
+      <!-- Stats Bar (h90) -->
+      <div class="card stats-bar">
+        <div class="time-picker">이번 주 <span style="color:var(--onview3)">▾</span></div>
+        <div class="stat-cell"><div class="stat-label">활성 미팅</div><div class="stat-value">4개</div></div>
+        <div class="stat-cell"><div class="stat-label">확정된 예약</div><div class="stat-value">12건<span class="delta">+3</span></div></div>
+        <div class="stat-cell"><div class="stat-label">오늘 남은 미팅</div><div class="stat-value">2건</div></div>
+        <div class="stat-cell"><div class="stat-label">예약 가능 슬롯</div><div class="stat-value">26개</div></div>
+      </div>
+
+      <!-- 확정된 스케줄 -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="title7">다가오는 확정 일정</div>
+            <div class="desc">구글 캘린더와 동기화된 예약 확정 건입니다</div>
+          </div>
+          <button class="btn-ghost-sm">전체 보기</button>
+        </div>
+        <div class="list-body">
+          <div class="list-item">
+            <div class="li-left">
+              <span class="li-time">오늘 14:00 – 14:30</span>
+              <span class="li-title">포트폴리오 리뷰</span>
+              <span class="badge badge-online">온라인 · 구글 밋</span>
+              <span class="li-meta">김하늘 크리에이터 · haneul@example.com</span>
+            </div>
+            <button class="btn-ghost-sm">일정 보기</button>
+          </div>
+          <div class="list-item">
+            <div class="li-left">
+              <span class="li-time">오늘 16:00 – 17:00</span>
+              <span class="li-title">신규 클래스 기획 미팅</span>
+              <span class="badge badge-online">온라인 · 구글 밋</span>
+              <span class="li-meta">이도윤 크리에이터 · doyun.lee@example.com</span>
+            </div>
+            <button class="btn-ghost-sm">일정 보기</button>
+          </div>
+          <div class="list-item">
+            <div class="li-left">
+              <span class="li-time">내일 10:30 – 10:50</span>
+              <span class="li-title">촬영 사전 점검</span>
+              <span class="badge badge-offline">오프라인 · 성수 스튜디오</span>
+              <span class="li-meta">박서준 크리에이터 · seojun.p@example.com</span>
+            </div>
+            <button class="btn-ghost-sm">일정 보기</button>
+          </div>
+          <div class="list-item">
+            <div class="li-left">
+              <span class="li-time">8.12 (수) 11:00 – 11:30</span>
+              <span class="li-title">포트폴리오 리뷰</span>
+              <span class="badge badge-online">온라인 · 구글 밋</span>
+              <span class="li-meta">최유나 크리에이터 · yuna.choi@example.com</span>
+            </div>
+            <button class="btn-ghost-sm">일정 보기</button>
+          </div>
+          <div class="list-item">
+            <div class="li-left">
+              <span class="li-time">8.13 (목) 15:00 – 16:30</span>
+              <span class="li-title">시즌 프로모션 협의</span>
+              <span class="badge badge-online">온라인 · 구글 밋</span>
+              <span class="li-meta">정민재 크리에이터 · mj.jung@example.com</span>
+            </div>
+            <button class="btn-ghost-sm">일정 보기</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 미팅 목록 테이블 -->
+      <div class="card table-card">
+        <div class="table-toolbar">
+          <div class="search-row">
+            <div class="search-field">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="#949494" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="#949494" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <input placeholder="미팅명으로 검색" />
+            </div>
+            <button class="btn btn-outlined">내보내기</button>
+          </div>
+          <div class="filter-row">
+            <div class="chip-group">
+              <span class="chip selected">전체</span>
+              <span class="chip">활성</span>
+              <span class="chip">비활성</span>
+              <span class="chip">유형 ▾</span>
+              <span class="chip">소요 시간 ▾</span>
+            </div>
+            <button class="btn-ghost-sm">보기 옵션</button>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>미팅명</th><th>유형</th><th>소요 시간</th><th>참여 인원</th>
+              <th>상태</th><th>열린 슬롯</th><th>확정 예약</th><th>공유 링크</th><th>생성일</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="cell-main">포트폴리오 리뷰</span></td>
+              <td><span class="badge badge-online">온라인</span></td>
+              <td>30분</td><td>1명</td>
+              <td><span class="toggle on"></span> <span class="badge badge-active">활성</span></td>
+              <td>14개</td><td>6건</td>
+              <td><span class="link">링크 복사</span></td>
+              <td><span class="muted">2026.08.01</span></td>
+            </tr>
+            <tr>
+              <td><span class="cell-main">신규 클래스 기획 미팅</span></td>
+              <td><span class="badge badge-online">온라인</span></td>
+              <td>60분</td><td>3명</td>
+              <td><span class="toggle on"></span> <span class="badge badge-active">활성</span></td>
+              <td>6개</td><td>4건</td>
+              <td><span class="link">링크 복사</span></td>
+              <td><span class="muted">2026.07.28</span></td>
+            </tr>
+            <tr>
+              <td><span class="cell-main">촬영 사전 점검</span></td>
+              <td><span class="badge badge-offline">오프라인</span></td>
+              <td>20분</td><td>2명</td>
+              <td><span class="toggle on"></span> <span class="badge badge-active">활성</span></td>
+              <td>4개</td><td>1건</td>
+              <td><span class="link">링크 복사</span></td>
+              <td><span class="muted">2026.07.21</span></td>
+            </tr>
+            <tr>
+              <td><span class="cell-main">시즌 프로모션 협의</span></td>
+              <td><span class="badge badge-online">온라인</span></td>
+              <td>90분</td><td>4명</td>
+              <td><span class="toggle on"></span> <span class="badge badge-active">활성</span></td>
+              <td>2개</td><td>1건</td>
+              <td><span class="link">링크 복사</span></td>
+              <td><span class="muted">2026.07.15</span></td>
+            </tr>
+            <tr>
+              <td><span class="cell-main">정산 문의 상담 (구버전)</span></td>
+              <td><span class="badge badge-online">온라인</span></td>
+              <td>15분</td><td>1명</td>
+              <td><span class="toggle"></span> <span class="badge badge-inactive">비활성</span></td>
+              <td><span class="muted">—</span></td><td>0건</td>
+              <td><span class="muted">비활성 시 공유 불가</span></td>
+              <td><span class="muted">2026.06.30</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="table-footer">
+          <span>총 5개 미팅</span>
+          <div class="pagination">
+            <span class="page-btn">‹</span>
+            <span class="page-btn current">1</span>
+            <span class="page-btn">›</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- 미팅 생성 완료 시 노출되는 토스트 (플로우 마지막 단계) -->
+<div class="toast">
+  <span class="check">✓</span>
+  ‘포트폴리오 리뷰’ 미팅이 생성되었습니다 · 슬롯 14개 열림
+</div>
+
+</body>
+</html>
