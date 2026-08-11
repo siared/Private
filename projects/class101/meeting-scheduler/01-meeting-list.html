@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>미팅 관리 — 메인 (목록 / 1열 full-width)</title>
+<title>미팅 관리 — 메인 (1열 max-1312)</title>
 <style>
 /* ============================================================
    CLASS101 Admin — 미팅 예약 / 메인 화면
-   페이지 타입: 목록·대시보드 → 1열 full-width (콘텐츠 1600 @1920)
+   페이지 타입: 일반 콘텐츠(카드 스택) → 1열 max-1312 (콘텐츠 1232 @1920)
+   * 미팅 수가 적어 테이블·Stats Bar를 쓰지 않으므로 목록 타입(full-width)이 아닌
+     "그 외 일반 콘텐츠 → 1열 max-1312"에 매핑. 본문은 카드 수직 스택.
    토큰: tokens/tokens.md (vibrant-ui)
    TODO(브랜드): Pretendard JP 웹폰트 소스 미연결, 시스템 폰트로 폴백
    ============================================================ */
@@ -33,10 +35,9 @@ button{font:inherit;letter-spacing:inherit;cursor:pointer;background:none;border
 input{font:inherit;letter-spacing:inherit;color:inherit}
 
 /* ---------- 타이포 ---------- */
-.title3{font-size:24px;line-height:32px;font-weight:700;letter-spacing:-0.48px}
 .title4{font-size:20px;line-height:26px;font-weight:700;letter-spacing:-0.36px}
+.title5{font-size:18px;line-height:22px;font-weight:700;letter-spacing:-0.288px}
 .title7{font-size:14px;line-height:18px;font-weight:700;letter-spacing:-0.168px}
-.body3{font-size:13px;line-height:18px;font-weight:500;letter-spacing:-0.13px}
 .body4{font-size:12px;line-height:16px;letter-spacing:-0.12px}
 
 /* ---------- 셸: 헤더 72 / 사이드바 240 / 콘텐츠 패딩 40 ---------- */
@@ -72,85 +73,98 @@ input{font:inherit;letter-spacing:inherit;color:inherit}
 .nav-item.active svg{color:var(--onview1)}
 
 .content-area{flex:1;min-width:0;background:var(--bg)}
-/* 1열 full-width: 컨테이너 = 콘텐츠 영역 전체, 좌우 패딩 40 → 콘텐츠 1600 @1920 */
-.container-full{width:100%;padding:0 40px 60px}
+/* 1열 max-1312: 중앙 정렬, 좌우 패딩 40 → 콘텐츠 1232 */
+.container-1312{max-width:1312px;margin:0 auto;padding:0 40px 60px}
 
 /* ---------- 페이지 헤더 ---------- */
 .page-header{padding:20px 0;display:flex;align-items:center;justify-content:space-between}
 .page-header .btn-group{display:flex;gap:8px}
 
-/* ---------- 버튼 (ContainedButton md h38) ---------- */
+/* ---------- 버튼 ---------- */
 .btn{height:38px;padding:0 16px;border-radius:8px;font-size:14px;font-weight:500;letter-spacing:-0.168px;
   display:inline-flex;align-items:center;gap:6px;justify-content:center}
 .btn-primary{background:var(--primary);color:var(--on-primary);font-weight:700}
 .btn-primary:hover{filter:brightness(0.95)}
 .btn-tertiary{background:var(--neutral-muted);color:var(--onview1)}
 .btn-outlined{background:var(--bg);border:1px solid var(--outline2)}
+.btn-outlined:hover{background:var(--surface1)}
+.btn-sm-outlined{height:32px;padding:0 12px;border:1px solid var(--outline2);border-radius:8px;
+  font-size:13px;font-weight:500;letter-spacing:-0.13px;display:inline-flex;align-items:center;gap:5px}
+.btn-sm-outlined:hover{background:var(--surface1)}
 .btn-ghost-sm{height:30px;padding:0 8px;border-radius:6px;font-size:13px;letter-spacing:-0.13px;color:var(--text-secondary)}
 .btn-ghost-sm:hover{background:var(--surface1)}
 
+/* ---------- 섹션 헤더 (상세 패턴의 섹션 헤더 규격 차용) ---------- */
+.section{margin-top:12px}
+.section + .section{margin-top:40px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-header .left{display:flex;align-items:baseline;gap:8px}
+.section-header .count{font-size:14px;font-weight:700;color:var(--onview3)}
+.chip-group{display:flex;gap:6px}
+.chip{height:32px;padding:0 12px;border-radius:10000px;border:1px solid var(--outline2);
+  display:inline-flex;align-items:center;font-size:13px;font-weight:500;letter-spacing:-0.13px;color:var(--onview2)}
+.chip:hover{background:var(--surface1)}
+.chip.selected{border-color:var(--onview1);background:var(--neutral-muted);color:var(--onview1);font-weight:700}
+
 /* ---------- 카드 ---------- */
 .card{background:var(--bg);border:1px solid var(--outline2);border-radius:8px}
-.card-header{padding:20px;display:flex;align-items:center;justify-content:space-between}
+.card-stack{display:flex;flex-direction:column;gap:20px}
+.card-header{padding:20px;display:flex;align-items:flex-start;justify-content:space-between}
 .card-header .desc{margin-top:2px;font-size:12px;line-height:16px;letter-spacing:-0.12px;color:var(--onview3);font-weight:400}
 
-/* ---------- Stats Bar (h90) ---------- */
-.stats-bar{display:flex;align-items:stretch;height:90px;margin-bottom:28px}
-.time-picker{width:122px;flex:none;display:flex;align-items:center;justify-content:space-between;
-  padding:0 12px;border-right:1px solid var(--outline2);font-size:13px;font-weight:500;letter-spacing:-0.13px;cursor:pointer}
-.stat-cell{flex:1;padding:16px;display:flex;flex-direction:column;gap:8px;position:relative}
-.stat-cell + .stat-cell::before{content:"";position:absolute;left:0;top:16px;bottom:16px;width:1px;background:var(--outline2)}
-.stat-label{font-size:13px;line-height:18px;font-weight:500;letter-spacing:-0.13px;color:var(--onview3)}
-.stat-value{font-size:24px;line-height:32px;font-weight:700;letter-spacing:-0.48px}
-.stat-value .delta{font-size:12px;line-height:16px;font-weight:500;letter-spacing:-0.12px;color:var(--success-fg);margin-left:6px}
+/* ---------- 미팅 카드 ---------- */
+.meeting{padding:20px;display:flex;align-items:center;gap:24px}
+.meeting:hover{background:var(--surface1)}
+.m-main{flex:1;min-width:0}
+.m-title-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.m-title{font-size:16px;line-height:20px;font-weight:700;letter-spacing:-0.24px}
+.m-desc{margin-top:6px;font-size:13px;line-height:18px;letter-spacing:-0.13px;color:var(--onview2);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:560px}
+.m-meta{margin-top:8px;display:flex;align-items:center;gap:8px;
+  font-size:12px;line-height:16px;letter-spacing:-0.12px;color:var(--onview3)}
+.m-meta .sep{color:var(--surface4)}
+.m-link{color:var(--text-secondary);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px}
+
+/* 슬롯/예약 수치 (Title.level3 24 규격) */
+.m-stats{display:flex;gap:28px;flex:none;padding-right:4px}
+.m-stat{text-align:right;min-width:64px}
+.m-stat .k{font-size:12px;line-height:16px;letter-spacing:-0.12px;color:var(--onview3)}
+.m-stat .v{margin-top:2px;font-size:24px;line-height:32px;font-weight:700;letter-spacing:-0.48px;
+  font-variant-numeric:tabular-nums}
+.m-stat .v small{font-size:13px;font-weight:500;color:var(--onview3);margin-left:2px;letter-spacing:-0.13px}
+
+.m-side{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:10px;
+  padding-left:24px;border-left:1px solid var(--outline1);align-self:stretch;justify-content:center}
+.toggle-row{display:flex;align-items:center;gap:8px}
+.toggle{width:36px;height:20px;border-radius:10000px;background:var(--surface4);position:relative;display:inline-block;cursor:pointer}
+.toggle::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff}
+.toggle.on{background:var(--primary)}
+.toggle.on::after{left:auto;right:2px}
+.toggle-label{font-size:13px;font-weight:500;letter-spacing:-0.13px;color:var(--onview2);min-width:40px}
+.m-actions{display:flex;gap:8px}
+
+/* 비활성 미팅 */
+.meeting.off .m-title,.meeting.off .m-stat .v{color:var(--onview3)}
+.meeting.off .m-desc{color:var(--onview3)}
+
+/* 배지 */
+.badge{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:10000px;
+  font-size:12px;font-weight:500;letter-spacing:-0.12px}
+.badge-online{background:var(--info-bg);color:var(--blue-dark)}
+.badge-offline{background:var(--neutral-muted);color:var(--onview2)}
+.badge-neutral{background:var(--neutral-muted);color:var(--onview2)}
+.badge-inactive{background:var(--neutral-muted);color:var(--onview3)}
 
 /* ---------- 다가오는 확정 일정 (List Item Group) ---------- */
 .list-body{padding:0 12px 12px}
 .list-item{height:36px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 8px;border-radius:6px}
 .list-item:hover{background:var(--surface1)}
 .li-left{display:flex;align-items:center;gap:12px;min-width:0}
-.li-time{width:150px;flex:none;font-size:13px;font-weight:700;letter-spacing:-0.13px}
+.li-time{width:160px;flex:none;font-size:13px;font-weight:700;letter-spacing:-0.13px;font-variant-numeric:tabular-nums}
 .li-title{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .li-meta{color:var(--onview3);font-size:13px;letter-spacing:-0.13px;white-space:nowrap}
-.badge{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:10000px;
-  font-size:12px;font-weight:500;letter-spacing:-0.12px}
-.badge-online{background:var(--info-bg);color:var(--blue-dark)}
-.badge-offline{background:var(--neutral-muted);color:var(--onview2)}
-.badge-active{background:var(--success-bg);color:var(--success-fg)}
-.badge-inactive{background:var(--neutral-muted);color:var(--onview3)}
 
-/* ---------- 테이블 (vibrant-ui Table 목업) ---------- */
-.table-card{margin-top:28px}
-.table-toolbar{padding:20px 20px 0}
-.search-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.search-field{width:400px;height:38px;border:1px solid var(--outline2);border-radius:8px;
-  display:flex;align-items:center;gap:8px;padding:0 12px;color:var(--onview3)}
-.search-field input{border:none;outline:none;flex:1;background:transparent;font-size:14px}
-.search-field input::placeholder{color:var(--onview3)}
-.filter-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.chip-group{display:flex;gap:8px}
-.chip{height:38px;padding:0 14px;border-radius:10000px;border:1px solid var(--outline2);
-  display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;letter-spacing:-0.13px;color:var(--onview2)}
-.chip.selected{border-color:var(--onview1);background:var(--neutral-muted);color:var(--onview1)}
-table{width:100%;border-collapse:collapse}
-thead th{height:44px;background:var(--surface1);text-align:left;padding:0 20px;
-  font-size:13px;font-weight:500;letter-spacing:-0.13px;color:var(--onview2);white-space:nowrap}
-tbody td{height:44px;padding:0 20px;border-top:1px solid var(--outline1);white-space:nowrap}
-tbody tr:hover{background:var(--surface1)}
-td .cell-main{font-weight:500}
-td .muted{color:var(--onview3)}
-.link{color:var(--blue-dark);font-weight:500;cursor:pointer}
-/* 토글 (활성/비활성) */
-.toggle{width:36px;height:20px;border-radius:10000px;background:var(--surface4);position:relative;display:inline-block;vertical-align:middle;cursor:pointer}
-.toggle::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff}
-.toggle.on{background:var(--primary)}
-.toggle.on::after{left:auto;right:2px}
-.table-footer{height:38px;margin:12px 20px 20px;display:flex;align-items:center;justify-content:space-between;color:var(--onview3);font-size:13px;letter-spacing:-0.13px}
-.pagination{display:flex;gap:4px}
-.page-btn{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--onview2)}
-.page-btn.current{background:var(--neutral-muted);font-weight:700;color:var(--onview1)}
-
-/* ---------- 생성 완료 토스트 (inverseSurface) ---------- */
+/* ---------- 생성 완료 토스트 ---------- */
 .toast{position:fixed;right:40px;bottom:40px;z-index:60;background:var(--inverse);color:var(--on-inverse);
   border-radius:8px;padding:14px 18px;display:flex;align-items:center;gap:10px;font-size:14px;letter-spacing:-0.168px;
   box-shadow:0 8px 24px rgba(0,0,0,0.2)}
@@ -197,9 +211,9 @@ td .muted{color:var(--onview3)}
     </div>
   </nav>
 
-  <!-- ===== 콘텐츠 영역: 1열 full-width ===== -->
+  <!-- ===== 콘텐츠 영역: 1열 max-1312 ===== -->
   <main class="content-area">
-    <div class="container-full">
+    <div class="container-1312">
 
       <!-- 페이지 헤더 -->
       <div class="page-header">
@@ -210,158 +224,251 @@ td .muted{color:var(--onview3)}
         </div>
       </div>
 
-      <!-- Stats Bar (h90) -->
-      <div class="card stats-bar">
-        <div class="time-picker">이번 주 <span style="color:var(--onview3)">▾</span></div>
-        <div class="stat-cell"><div class="stat-label">활성 미팅</div><div class="stat-value">4개</div></div>
-        <div class="stat-cell"><div class="stat-label">확정된 예약</div><div class="stat-value">12건<span class="delta">+3</span></div></div>
-        <div class="stat-cell"><div class="stat-label">오늘 남은 미팅</div><div class="stat-value">2건</div></div>
-        <div class="stat-cell"><div class="stat-label">예약 가능 슬롯</div><div class="stat-value">26개</div></div>
-      </div>
+      <!-- ===== 섹션 1: 내 미팅 (카드 수직 스택) ===== -->
+      <section class="section">
+        <div class="section-header">
+          <div class="left">
+            <h2 class="title5">내 미팅</h2>
+            <span class="count">5</span>
+          </div>
+          <div class="chip-group">
+            <span class="chip selected">전체</span>
+            <span class="chip">활성 4</span>
+            <span class="chip">비활성 1</span>
+          </div>
+        </div>
 
-      <!-- 확정된 스케줄 -->
-      <div class="card">
-        <div class="card-header">
-          <div>
-            <div class="title7">다가오는 확정 일정</div>
-            <div class="desc">구글 캘린더와 동기화된 예약 확정 건입니다</div>
-          </div>
-          <button class="btn-ghost-sm">전체 보기</button>
-        </div>
-        <div class="list-body">
-          <div class="list-item">
-            <div class="li-left">
-              <span class="li-time">오늘 14:00 – 14:30</span>
-              <span class="li-title">포트폴리오 리뷰</span>
-              <span class="badge badge-online">온라인 · 구글 밋</span>
-              <span class="li-meta">김하늘 크리에이터 · haneul@example.com</span>
+        <div class="card-stack">
+          <!-- 미팅 1 -->
+          <article class="card meeting">
+            <div class="m-main">
+              <div class="m-title-row">
+                <span class="m-title">포트폴리오 리뷰</span>
+                <span class="badge badge-online">온라인 · 구글 밋</span>
+                <span class="badge badge-neutral">30분</span>
+                <span class="badge badge-neutral">1명</span>
+              </div>
+              <div class="m-desc">클래스 오픈을 준비 중인 크리에이터님의 포트폴리오를 함께 검토하고, 클래스 주제 방향을 제안해 드립니다.</div>
+              <div class="m-meta">
+                <span class="m-link">class101.net/meet/kim/portfolio-review</span>
+                <span class="sep">·</span>
+                <span>2026.08.01 생성</span>
+              </div>
             </div>
-            <button class="btn-ghost-sm">일정 보기</button>
-          </div>
-          <div class="list-item">
-            <div class="li-left">
-              <span class="li-time">오늘 16:00 – 17:00</span>
-              <span class="li-title">신규 클래스 기획 미팅</span>
-              <span class="badge badge-online">온라인 · 구글 밋</span>
-              <span class="li-meta">이도윤 크리에이터 · doyun.lee@example.com</span>
+            <div class="m-stats">
+              <div class="m-stat"><div class="k">열린 슬롯</div><div class="v">14<small>개</small></div></div>
+              <div class="m-stat"><div class="k">확정 예약</div><div class="v">6<small>건</small></div></div>
             </div>
-            <button class="btn-ghost-sm">일정 보기</button>
-          </div>
-          <div class="list-item">
-            <div class="li-left">
-              <span class="li-time">내일 10:30 – 10:50</span>
-              <span class="li-title">촬영 사전 점검</span>
-              <span class="badge badge-offline">오프라인 · 성수 스튜디오</span>
-              <span class="li-meta">박서준 크리에이터 · seojun.p@example.com</span>
+            <div class="m-side">
+              <div class="toggle-row"><span class="toggle-label">활성</span><span class="toggle on"></span></div>
+              <div class="m-actions">
+                <button class="btn-sm-outlined">
+                  <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M6 8a2.5 2.5 0 003.5.3l2-2a2.5 2.5 0 00-3.5-3.5l-1 1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M8 6a2.5 2.5 0 00-3.5-.3l-2 2A2.5 2.5 0 006 11.2l1-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                  링크 복사
+                </button>
+                <button class="btn-sm-outlined">일정 관리</button>
+                <button class="btn-sm-outlined">⋯</button>
+              </div>
             </div>
-            <button class="btn-ghost-sm">일정 보기</button>
-          </div>
-          <div class="list-item">
-            <div class="li-left">
-              <span class="li-time">8.12 (수) 11:00 – 11:30</span>
-              <span class="li-title">포트폴리오 리뷰</span>
-              <span class="badge badge-online">온라인 · 구글 밋</span>
-              <span class="li-meta">최유나 크리에이터 · yuna.choi@example.com</span>
-            </div>
-            <button class="btn-ghost-sm">일정 보기</button>
-          </div>
-          <div class="list-item">
-            <div class="li-left">
-              <span class="li-time">8.13 (목) 15:00 – 16:30</span>
-              <span class="li-title">시즌 프로모션 협의</span>
-              <span class="badge badge-online">온라인 · 구글 밋</span>
-              <span class="li-meta">정민재 크리에이터 · mj.jung@example.com</span>
-            </div>
-            <button class="btn-ghost-sm">일정 보기</button>
-          </div>
-        </div>
-      </div>
+          </article>
 
-      <!-- 미팅 목록 테이블 -->
-      <div class="card table-card">
-        <div class="table-toolbar">
-          <div class="search-row">
-            <div class="search-field">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="#949494" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="#949494" stroke-width="1.5" stroke-linecap="round"/></svg>
-              <input placeholder="미팅명으로 검색" />
+          <!-- 미팅 2 -->
+          <article class="card meeting">
+            <div class="m-main">
+              <div class="m-title-row">
+                <span class="m-title">신규 클래스 기획 미팅</span>
+                <span class="badge badge-online">온라인 · 구글 밋</span>
+                <span class="badge badge-neutral">60분</span>
+                <span class="badge badge-neutral">3명</span>
+              </div>
+              <div class="m-desc">클래스 커리큘럼과 촬영 일정을 담당 PD와 함께 논의합니다.</div>
+              <div class="m-meta">
+                <span class="m-link">class101.net/meet/kim/class-planning</span>
+                <span class="sep">·</span>
+                <span>2026.07.28 생성</span>
+              </div>
             </div>
-            <button class="btn btn-outlined">내보내기</button>
+            <div class="m-stats">
+              <div class="m-stat"><div class="k">열린 슬롯</div><div class="v">6<small>개</small></div></div>
+              <div class="m-stat"><div class="k">확정 예약</div><div class="v">4<small>건</small></div></div>
+            </div>
+            <div class="m-side">
+              <div class="toggle-row"><span class="toggle-label">활성</span><span class="toggle on"></span></div>
+              <div class="m-actions">
+                <button class="btn-sm-outlined">
+                  <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M6 8a2.5 2.5 0 003.5.3l2-2a2.5 2.5 0 00-3.5-3.5l-1 1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M8 6a2.5 2.5 0 00-3.5-.3l-2 2A2.5 2.5 0 006 11.2l1-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                  링크 복사
+                </button>
+                <button class="btn-sm-outlined">일정 관리</button>
+                <button class="btn-sm-outlined">⋯</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- 미팅 3 -->
+          <article class="card meeting">
+            <div class="m-main">
+              <div class="m-title-row">
+                <span class="m-title">촬영 사전 점검</span>
+                <span class="badge badge-offline">오프라인 · 성수 스튜디오</span>
+                <span class="badge badge-neutral">20분</span>
+                <span class="badge badge-neutral">2명</span>
+              </div>
+              <div class="m-desc">촬영 당일 준비물과 동선을 짧게 확인하는 미팅입니다.</div>
+              <div class="m-meta">
+                <span class="m-link">class101.net/meet/kim/shoot-check</span>
+                <span class="sep">·</span>
+                <span>2026.07.21 생성</span>
+              </div>
+            </div>
+            <div class="m-stats">
+              <div class="m-stat"><div class="k">열린 슬롯</div><div class="v">4<small>개</small></div></div>
+              <div class="m-stat"><div class="k">확정 예약</div><div class="v">1<small>건</small></div></div>
+            </div>
+            <div class="m-side">
+              <div class="toggle-row"><span class="toggle-label">활성</span><span class="toggle on"></span></div>
+              <div class="m-actions">
+                <button class="btn-sm-outlined">
+                  <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M6 8a2.5 2.5 0 003.5.3l2-2a2.5 2.5 0 00-3.5-3.5l-1 1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M8 6a2.5 2.5 0 00-3.5-.3l-2 2A2.5 2.5 0 006 11.2l1-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                  링크 복사
+                </button>
+                <button class="btn-sm-outlined">일정 관리</button>
+                <button class="btn-sm-outlined">⋯</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- 미팅 4 -->
+          <article class="card meeting">
+            <div class="m-main">
+              <div class="m-title-row">
+                <span class="m-title">시즌 프로모션 협의</span>
+                <span class="badge badge-online">온라인 · 구글 밋</span>
+                <span class="badge badge-neutral">90분</span>
+                <span class="badge badge-neutral">4명</span>
+              </div>
+              <div class="m-desc">시즌 프로모션 참여 조건과 콘텐츠 일정을 협의합니다.</div>
+              <div class="m-meta">
+                <span class="m-link">class101.net/meet/kim/season-promo</span>
+                <span class="sep">·</span>
+                <span>2026.07.15 생성</span>
+              </div>
+            </div>
+            <div class="m-stats">
+              <div class="m-stat"><div class="k">열린 슬롯</div><div class="v">2<small>개</small></div></div>
+              <div class="m-stat"><div class="k">확정 예약</div><div class="v">1<small>건</small></div></div>
+            </div>
+            <div class="m-side">
+              <div class="toggle-row"><span class="toggle-label">활성</span><span class="toggle on"></span></div>
+              <div class="m-actions">
+                <button class="btn-sm-outlined">
+                  <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M6 8a2.5 2.5 0 003.5.3l2-2a2.5 2.5 0 00-3.5-3.5l-1 1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M8 6a2.5 2.5 0 00-3.5-.3l-2 2A2.5 2.5 0 006 11.2l1-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                  링크 복사
+                </button>
+                <button class="btn-sm-outlined">일정 관리</button>
+                <button class="btn-sm-outlined">⋯</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- 미팅 5 (비활성) -->
+          <article class="card meeting off">
+            <div class="m-main">
+              <div class="m-title-row">
+                <span class="m-title">정산 문의 상담</span>
+                <span class="badge badge-inactive">비활성</span>
+                <span class="badge badge-neutral">15분</span>
+                <span class="badge badge-neutral">1명</span>
+              </div>
+              <div class="m-desc">정산 주기와 세금계산서 발행 관련 문의를 받습니다.</div>
+              <div class="m-meta">
+                <span>비활성 상태에서는 공유 링크로 접속해도 예약 화면이 보이지 않습니다</span>
+                <span class="sep">·</span>
+                <span>2026.06.30 생성</span>
+              </div>
+            </div>
+            <div class="m-stats">
+              <div class="m-stat"><div class="k">열린 슬롯</div><div class="v">—</div></div>
+              <div class="m-stat"><div class="k">확정 예약</div><div class="v">0<small>건</small></div></div>
+            </div>
+            <div class="m-side">
+              <div class="toggle-row"><span class="toggle-label">비활성</span><span class="toggle"></span></div>
+              <div class="m-actions">
+                <button class="btn-sm-outlined">일정 관리</button>
+                <button class="btn-sm-outlined">⋯</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ===== 섹션 2: 다가오는 확정 일정 ===== -->
+      <section class="section">
+        <div class="section-header">
+          <div class="left">
+            <h2 class="title5">다가오는 확정 일정</h2>
+            <span class="count">12</span>
           </div>
-          <div class="filter-row">
-            <div class="chip-group">
-              <span class="chip selected">전체</span>
-              <span class="chip">활성</span>
-              <span class="chip">비활성</span>
-              <span class="chip">유형 ▾</span>
-              <span class="chip">소요 시간 ▾</span>
+          <button class="btn btn-outlined">예약 현황 전체 보기</button>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="title7">이번 주</div>
+              <div class="desc">구글 캘린더와 동기화된 예약 확정 건입니다</div>
             </div>
-            <button class="btn-ghost-sm">보기 옵션</button>
+            <button class="btn-ghost-sm">캘린더에서 보기</button>
+          </div>
+          <div class="list-body">
+            <div class="list-item">
+              <div class="li-left">
+                <span class="li-time">오늘 14:00 – 14:30</span>
+                <span class="li-title">포트폴리오 리뷰</span>
+                <span class="badge badge-online">온라인</span>
+                <span class="li-meta">김하늘 크리에이터 · haneul@example.com</span>
+              </div>
+              <button class="btn-ghost-sm">일정 보기</button>
+            </div>
+            <div class="list-item">
+              <div class="li-left">
+                <span class="li-time">오늘 16:00 – 17:00</span>
+                <span class="li-title">신규 클래스 기획 미팅</span>
+                <span class="badge badge-online">온라인</span>
+                <span class="li-meta">이도윤 크리에이터 · doyun.lee@example.com</span>
+              </div>
+              <button class="btn-ghost-sm">일정 보기</button>
+            </div>
+            <div class="list-item">
+              <div class="li-left">
+                <span class="li-time">내일 10:30 – 10:50</span>
+                <span class="li-title">촬영 사전 점검</span>
+                <span class="badge badge-offline">오프라인</span>
+                <span class="li-meta">박서준 크리에이터 · seojun.p@example.com</span>
+              </div>
+              <button class="btn-ghost-sm">일정 보기</button>
+            </div>
+            <div class="list-item">
+              <div class="li-left">
+                <span class="li-time">8.12 (수) 11:00 – 11:30</span>
+                <span class="li-title">포트폴리오 리뷰</span>
+                <span class="badge badge-online">온라인</span>
+                <span class="li-meta">최유나 크리에이터 · yuna.choi@example.com</span>
+              </div>
+              <button class="btn-ghost-sm">일정 보기</button>
+            </div>
+            <div class="list-item">
+              <div class="li-left">
+                <span class="li-time">8.13 (목) 15:00 – 16:30</span>
+                <span class="li-title">시즌 프로모션 협의</span>
+                <span class="badge badge-online">온라인</span>
+                <span class="li-meta">정민재 크리에이터 · mj.jung@example.com</span>
+              </div>
+              <button class="btn-ghost-sm">일정 보기</button>
+            </div>
           </div>
         </div>
-        <table>
-          <thead>
-            <tr>
-              <th>미팅명</th><th>유형</th><th>소요 시간</th><th>참여 인원</th>
-              <th>상태</th><th>열린 슬롯</th><th>확정 예약</th><th>공유 링크</th><th>생성일</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><span class="cell-main">포트폴리오 리뷰</span></td>
-              <td><span class="badge badge-online">온라인</span></td>
-              <td>30분</td><td>1명</td>
-              <td><span class="toggle on"></span> <span class="badge badge-active">활성</span></td>
-              <td>14개</td><td>6건</td>
-              <td><span class="link">링크 복사</span></td>
-              <td><span class="muted">2026.08.01</span></td>
-            </tr>
-            <tr>
-              <td><span class="cell-main">신규 클래스 기획 미팅</span></td>
-              <td><span class="badge badge-online">온라인</span></td>
-              <td>60분</td><td>3명</td>
-              <td><span class="toggle on"></span> <span class="badge badge-active">활성</span></td>
-              <td>6개</td><td>4건</td>
-              <td><span class="link">링크 복사</span></td>
-              <td><span class="muted">2026.07.28</span></td>
-            </tr>
-            <tr>
-              <td><span class="cell-main">촬영 사전 점검</span></td>
-              <td><span class="badge badge-offline">오프라인</span></td>
-              <td>20분</td><td>2명</td>
-              <td><span class="toggle on"></span> <span class="badge badge-active">활성</span></td>
-              <td>4개</td><td>1건</td>
-              <td><span class="link">링크 복사</span></td>
-              <td><span class="muted">2026.07.21</span></td>
-            </tr>
-            <tr>
-              <td><span class="cell-main">시즌 프로모션 협의</span></td>
-              <td><span class="badge badge-online">온라인</span></td>
-              <td>90분</td><td>4명</td>
-              <td><span class="toggle on"></span> <span class="badge badge-active">활성</span></td>
-              <td>2개</td><td>1건</td>
-              <td><span class="link">링크 복사</span></td>
-              <td><span class="muted">2026.07.15</span></td>
-            </tr>
-            <tr>
-              <td><span class="cell-main">정산 문의 상담 (구버전)</span></td>
-              <td><span class="badge badge-online">온라인</span></td>
-              <td>15분</td><td>1명</td>
-              <td><span class="toggle"></span> <span class="badge badge-inactive">비활성</span></td>
-              <td><span class="muted">—</span></td><td>0건</td>
-              <td><span class="muted">비활성 시 공유 불가</span></td>
-              <td><span class="muted">2026.06.30</span></td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="table-footer">
-          <span>총 5개 미팅</span>
-          <div class="pagination">
-            <span class="page-btn">‹</span>
-            <span class="page-btn current">1</span>
-            <span class="page-btn">›</span>
-          </div>
-        </div>
-      </div>
+      </section>
 
     </div>
   </main>
