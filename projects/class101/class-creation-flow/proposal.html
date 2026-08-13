@@ -1,0 +1,830 @@
+<title>클래스 제작 플로우 개선안</title>
+<style>
+  :root {
+    --ground: #FFFFFF;
+    --surface: #FAF8F6;
+    --surface-2: #F3EFEB;
+    --ink: #0C0C0C;
+    --ink-2: #57514B;
+    --ink-3: #8C847C;
+    --line: rgba(12, 8, 4, 0.10);
+    --line-soft: rgba(12, 8, 4, 0.055);
+    --accent: #FF5D00;
+    --accent-soft: rgba(255, 93, 0, 0.10);
+    --ok: #078641;
+    --ok-soft: #DBFCE1;
+    --warn: #CB8409;
+    --warn-soft: #FBF2DE;
+    --info: #376DFA;
+    --info-soft: #E7EDFE;
+    --bad: #D8102F;
+    --bad-soft: #FCEEF0;
+
+    --sans: "Pretendard JP", "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+            "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, "Consolas", monospace;
+
+    --measure: 68ch;
+    --r-sm: 4px;
+    --r-md: 8px;
+    --r-lg: 16px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #121110;
+      --surface: #1A1817;
+      --surface-2: #232020;
+      --ink: #F4F1ED;
+      --ink-2: #B5ADA6;
+      --ink-3: #857D76;
+      --line: rgba(255, 240, 228, 0.14);
+      --line-soft: rgba(255, 240, 228, 0.07);
+      --accent: #FF7C33;
+      --accent-soft: rgba(255, 124, 51, 0.16);
+      --ok: #4ADE80;
+      --ok-soft: rgba(74, 222, 128, 0.15);
+      --warn: #F0B429;
+      --warn-soft: rgba(240, 180, 41, 0.15);
+      --info: #7EA2FF;
+      --info-soft: rgba(126, 162, 255, 0.16);
+      --bad: #FF6B80;
+      --bad-soft: rgba(255, 107, 128, 0.15);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #121110;
+    --surface: #1A1817;
+    --surface-2: #232020;
+    --ink: #F4F1ED;
+    --ink-2: #B5ADA6;
+    --ink-3: #857D76;
+    --line: rgba(255, 240, 228, 0.14);
+    --line-soft: rgba(255, 240, 228, 0.07);
+    --accent: #FF7C33;
+    --accent-soft: rgba(255, 124, 51, 0.16);
+    --ok: #4ADE80;
+    --ok-soft: rgba(74, 222, 128, 0.15);
+    --warn: #F0B429;
+    --warn-soft: rgba(240, 180, 41, 0.15);
+    --info: #7EA2FF;
+    --info-soft: rgba(126, 162, 255, 0.16);
+    --bad: #FF6B80;
+    --bad-soft: rgba(255, 107, 128, 0.15);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    letter-spacing: -0.011em;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 28px 120px;
+  }
+
+  /* ---------- masthead ---------- */
+  .masthead {
+    padding: 72px 0 40px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(30px, 4.6vw, 46px);
+    line-height: 1.18;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+  .standfirst {
+    margin: 0;
+    max-width: var(--measure);
+    font-size: 17px;
+    color: var(--ink-2);
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink-3);
+  }
+  .meta a { color: var(--ink-2); }
+
+  /* ---------- stepper motif ---------- */
+  .stepstrip {
+    margin: 40px 0 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--line-soft);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+  .step {
+    background: var(--surface);
+    padding: 18px 18px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .step.is-current { background: var(--ground); box-shadow: inset 0 2px 0 var(--accent); }
+  .step-n {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ink-3);
+  }
+  .step-name { font-size: 14.5px; font-weight: 600; }
+  .step-due {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-2);
+    font-variant-numeric: tabular-nums;
+  }
+  .step-due .new { color: var(--accent); }
+
+  /* ---------- sections ---------- */
+  section { padding-top: 60px; }
+  h2 {
+    margin: 0 0 6px;
+    font-size: 13px;
+    font-family: var(--mono);
+    font-weight: 500;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  h3 {
+    margin: 0 0 14px;
+    font-size: clamp(22px, 2.6vw, 27px);
+    line-height: 1.3;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+  h4 {
+    margin: 32px 0 10px;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  p { margin: 0 0 14px; max-width: var(--measure); }
+  .lede { font-size: 17px; color: var(--ink-2); }
+  strong { font-weight: 700; }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible, .step:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  ul { margin: 0 0 14px; padding-left: 18px; max-width: var(--measure); }
+  li { margin-bottom: 6px; }
+
+  /* ---------- problem cards ---------- */
+  .problems {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+  }
+  .problem {
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 20px;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .problem-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .problem-title { font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
+  .problem p { margin: 0; font-size: 14.5px; color: var(--ink-2); line-height: 1.65; }
+
+  /* ---------- tables ---------- */
+  .tablewrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    margin: 20px 0 8px;
+  }
+  table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 14.5px; }
+  th, td { text-align: left; padding: 13px 16px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  th {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    background: var(--surface);
+    white-space: nowrap;
+  }
+  tr:last-child td { border-bottom: none; }
+  td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--ink-2); }
+
+  /* ---------- mockups ---------- */
+  .mock {
+    margin: 24px 0 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .mock-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    background: var(--ground);
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 999px; background: var(--line); }
+  .mock-body { display: grid; grid-template-columns: 1fr 250px; min-height: 260px; }
+  .mock-canvas {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-right: 1px solid var(--line);
+  }
+  .ghost { border-radius: var(--r-md); background: var(--surface-2); }
+  .ghost.h { height: 12px; }
+  .ghost.h-lg { height: 22px; width: 55%; }
+  .ghost.row { height: 40px; }
+  .mock-panel { padding: 18px; display: flex; flex-direction: column; gap: 12px; background: var(--ground); }
+  .panel-tabs { display: flex; gap: 6px; }
+  .ptab {
+    font-size: 11.5px;
+    padding: 5px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--ink-3);
+    white-space: nowrap;
+  }
+  .ptab.on { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  .check { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+  .box {
+    flex: none;
+    width: 14px; height: 14px;
+    margin-top: 3px;
+    border-radius: var(--r-sm);
+    border: 1.5px solid var(--line);
+  }
+  .box.done { background: var(--ok); border-color: var(--ok); }
+  .panel-cta {
+    margin-top: auto;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: var(--r-md);
+    padding: 9px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .caption {
+    font-size: 13px;
+    color: var(--ink-3);
+    margin: 0 0 4px;
+    max-width: var(--measure);
+  }
+
+  /* progress card mock */
+  .pcard {
+    margin: 24px 0 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--surface);
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    overflow: hidden;
+  }
+  .pcard-main { padding: 22px; display: flex; flex-direction: column; gap: 10px; }
+  .pcard-side {
+    padding: 22px;
+    border-left: 1px dashed var(--accent);
+    background: var(--accent-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .pcard-title { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; }
+  .pcard-sub { font-size: 13.5px; color: var(--ink-2); }
+  .bar { height: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+  .bar > i { display: block; height: 100%; width: 18%; background: var(--accent); border-radius: 999px; }
+  .counts {
+    display: flex; justify-content: space-between;
+    font-family: var(--mono); font-size: 12px; color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .dday {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .pace { font-size: 13.5px; color: var(--ink-2); }
+  .btn-ghost {
+    align-self: flex-start;
+    margin-top: 2px;
+    border: 1px solid var(--line);
+    background: var(--ground);
+    border-radius: var(--r-md);
+    padding: 7px 12px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* ---------- pills ---------- */
+  .pill {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    padding: 3px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .pill.ok { background: var(--ok-soft); color: var(--ok); }
+  .pill.warn { background: var(--warn-soft); color: var(--warn); }
+  .pill.info { background: var(--info-soft); color: var(--info); }
+  .pill.bad { background: var(--bad-soft); color: var(--bad); }
+
+  /* ---------- callout ---------- */
+  .callout {
+    margin: 22px 0;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--surface);
+  }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout .k {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  /* ---------- hub ---------- */
+  .hub {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    margin-top: 22px;
+  }
+  .hub > div { background: var(--ground); padding: 22px; display: flex; flex-direction: column; gap: 8px; }
+  .hub .q { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
+  .hub .a { font-size: 13.5px; color: var(--ink-2); }
+
+  /* ---------- open questions ---------- */
+  ol.q { counter-reset: q; list-style: none; padding: 0; margin: 20px 0 0; max-width: var(--measure); }
+  ol.q li {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 4px;
+    padding: 14px 0;
+    border-top: 1px solid var(--line-soft);
+    font-size: 15px;
+  }
+  ol.q li::before {
+    counter-increment: q;
+    content: "Q" counter(q);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    padding-top: 4px;
+  }
+
+  footer {
+    margin-top: 72px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-size: 13.5px;
+    color: var(--ink-3);
+  }
+  footer ul { padding-left: 18px; }
+  footer a { color: var(--ink-2); }
+
+  @media (max-width: 820px) {
+    .stepstrip { grid-template-columns: repeat(2, 1fr); }
+    .mock-body { grid-template-columns: 1fr; }
+    .mock-canvas { border-right: none; border-bottom: 1px solid var(--line); }
+    .pcard { grid-template-columns: 1fr; }
+    .pcard-side { border-left: none; border-top: 1px dashed var(--accent); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Creator Center · 제작 플로우</div>
+    <h1>제작 중에 막힌 사람을,<br>제작 화면 안에서 붙잡기</h1>
+    <p class="standfirst">
+      클래스 제작 플로우에 <strong>케어 미팅 신청</strong>과 <strong>단계별 마감일</strong>을 넣는 제안.
+      함께 검토 승인 모달과 CS 채팅이 겹치는 문제를 정리하고, 검토 기준을 우측 상시 패널로 옮긴다.
+    </p>
+    <div class="meta">
+      <span>2026-08-13</span>
+      <span><a href="https://www.figma.com/design/KinBFSoq2roWCvQfJsRARd/Creator-Center?node-id=49835-16038">Figma · 260727 클래스 기획 미팅 플로우 개선</a></span>
+      <span>AS IS 6 frames / TO BE 미작성</span>
+    </div>
+  </header>
+
+  <div class="stepstrip">
+    <div class="step">
+      <span class="step-n">STEP 1</span>
+      <span class="step-name">강의 기획안</span>
+      <span class="step-due">~8/12 <span class="new">· 완료</span></span>
+    </div>
+    <div class="step is-current">
+      <span class="step-n">STEP 2</span>
+      <span class="step-name">테스트 영상</span>
+      <span class="step-due">~8/20 <span class="new">· D-5</span></span>
+    </div>
+    <div class="step">
+      <span class="step-n">STEP 3</span>
+      <span class="step-name">강의 제작</span>
+      <span class="step-due">~9/09</span>
+    </div>
+    <div class="step">
+      <span class="step-n">STEP 4</span>
+      <span class="step-name">런칭 예약</span>
+      <span class="step-due">~9/12</span>
+    </div>
+  </div>
+  <p class="caption" style="margin-top:10px">지금 스테퍼에는 날짜가 없다. 마감일을 얹으면 스테퍼가 그대로 일정표가 된다.</p>
+
+  <section>
+    <h2>현재 상태</h2>
+    <h3>AS IS에서 확인한 것</h3>
+    <p class="lede">
+      4단계 스테퍼(강의 기획안 → 테스트 영상 → 강의 제작 → 런칭 예약)에 순차 해금 구조.
+      3단계에는 좌측 서브내비와 <em>“전체 검토 승인까지 40개 남음”</em> 진행률 카드, 강의별 상태
+      <span class="pill info">검토 중</span> <span class="pill warn">개선 필요</span> <span class="pill ok">승인</span> 이 이미 있다.
+    </p>
+    <p>
+      검토가 승인되면 <strong>“검토 승인 완료! 이제 다음 단계를 준비해볼까요?”</strong> 모달이 뜨고
+      <code>검토 기준 보기</code> / <code>나중에</code> 를 준다. 이때 CS 채팅(해피)이 함께 열린다.
+      우하단에는 가이드 문서·해피 플로팅 버튼 2개가 상시 떠 있다.
+    </p>
+    <p>
+      미팅 쪽은 이미 자산이 충분하다. <strong>캘린더 + 슬롯 예약</strong>(1:1 15분 / 그룹 설명회 30분·정원 5명),
+      Google Meet 연동, 변경·취소 플로우, 그리고 미팅 상세의
+      <strong>“궁금한 점 물어보기” 입력 + 파일 첨부</strong>까지 만들어져 있다.
+      케어 미팅은 새로 만드는 게 아니라 <strong>제작 플로우 쪽에 진입점과 맥락 전달만 붙이는 일</strong>이다.
+    </p>
+
+    <div class="problems">
+      <div class="problem">
+        <span class="problem-tag">문제 01 · 타이밍</span>
+        <span class="problem-title">가장 안 읽을 때 가장 중요한 걸 준다</span>
+        <p>축하 모달과 CS 채팅이 동시에 뜬다. 검토 기준은 승인 직후 1회성으로 주어지는데, 정작 필요한 건 그 뒤 작업하는 내내다.</p>
+      </div>
+      <div class="problem">
+        <span class="problem-tag">문제 02 · 출구</span>
+        <span class="problem-title">막혔을 때 나갈 문이 챗봇뿐</span>
+        <p>새 단계가 열릴 때 “뭘 어디까지 해야 하지?”가 가장 큰 벽이고, 이건 글보다 말로 5분 듣는 게 빠르다.</p>
+      </div>
+      <div class="problem">
+        <span class="problem-tag">문제 03 · 시간</span>
+        <span class="problem-title">진행률은 개수뿐, 날짜가 없다</span>
+        <p>“40개 중 0개”만 있다. 크리에이터에겐 추진력이, 매니저에겐 느린 사람과 이탈한 사람을 가를 신호가 없다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>리서치</h2>
+    <h3>비슷한 문제를 푼 제품들</h3>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>사례</th><th>구조</th><th>가져올 것</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="https://kdp.amazon.com/en_US/help/topic/G201499480">Amazon KDP 사전 예약</a></td>
+            <td>저자가 출시일을 직접 걸고, <strong>1회에 한해 30일 무패널티 연기</strong>. 반복하면 1년간 사전 예약 금지.</td>
+            <td>연기를 막지 말고 <strong>등급화</strong>한다. 약속의 무게는 유지, 컨택 비용은 0.</td>
+          </tr>
+          <tr>
+            <td><a href="https://fiverrpromotion.net/blog/how-to-extend-delivery-date-on-a-fiverr-order/">Fiverr 납기 연장</a></td>
+            <td>주문 옆 <code>Request Extension</code> → 일수 + 사유 → 상대 수락.</td>
+            <td>버튼 하나 + 일수 + 사유라는 최소 구성. 단 우리는 승인 대기 없이 즉시 반영.</td>
+          </tr>
+          <tr>
+            <td><a href="https://web.mit.edu/ariely/www/MIT/Papers/deadlines.pdf">Ariely &amp; Wertenbroch (2002)</a></td>
+            <td>자기부과 마감일은 미루기를 줄이지만, <strong>균등 분배된 외부 마감일보다는 약하다.</strong> <a href="https://journals.sagepub.com/doi/10.1177/09567976261460772">2026 재현 연구</a>는 효과 재현 실패.</td>
+            <td>균등 분배 추천값을 기본값으로 깔고 조정만 허용하는 하이브리드. 그리고 <strong>A/B로 검증</strong>.</td>
+          </tr>
+          <tr>
+            <td><a href="https://support.udemy.com/hc/en-us/articles/229604988-Udemy-Course-Quality-Checklist">Udemy 강사 플로우</a></td>
+            <td>제출 전 품질 체크리스트를 상시 문서로 제공.</td>
+            <td>검토 기준은 “한 번 뜨는 모달”이 아니라 상시 체크리스트가 업계 표준.</td>
+          </tr>
+          <tr>
+            <td><a href="https://inflab-1.gitbook.io/inflearn/course-open/submit">인프런 강의 제출</a></td>
+            <td>제출 후 최대 7영업일, 수정 필요 시 <strong>별도 연락</strong>.</td>
+            <td>우리 “검토 중 99%”가 이미 낫다. 남은 격차는 검토 후 대화가 제품 밖으로 새는 것.</td>
+          </tr>
+          <tr>
+            <td><a href="https://inquirly.ai/blog/ai-automation/chatbot-to-human-handoff/">Drift / Intercom Fin</a></td>
+            <td>답변 실패·좌절·반복 루프를 감지해 사람에게 넘기고, <strong>대화 중 바로 캘린더로 예약</strong>. 맥락 전체가 함께 넘어간다.</td>
+            <td>해피의 역할 재정의 — 답변자가 아니라 <strong>미팅으로 가는 최단 경로</strong>.</td>
+          </tr>
+          <tr>
+            <td><a href="https://cal.com/embed">Cal.com inline embed</a></td>
+            <td>서드파티로 이동시키지 않고 흐름 안에 예약 위젯을 심는다.</td>
+            <td>케어 미팅은 페이지 이동이 아니라 <strong>패널 안 인라인 예약</strong>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>제안 A · 의견 1</h2>
+    <h3>축하는 순간, 기준은 상시</h3>
+    <p class="lede">승인 모달은 축하와 다음 행동 하나만 남기고, 검토 기준은 작업 화면에 상주하는 우측 패널로 옮긴다.</p>
+
+    <h4>승인 모달 정리</h4>
+    <ul>
+      <li>CS 채팅 자동 오픈 <strong>제거</strong>. 모달과 채팅이 동시에 뜨지 않는다.</li>
+      <li>타이틀: <em>“검토 승인 완료! 이제 ②테스트 영상 단계예요”</em> — 다음 단계에서 할 일 한 줄 + 추천 마감일 한 줄.</li>
+      <li>Primary <code>다음 단계 시작하기</code> / Secondary <code>15분 안내 미팅 잡기</code> / Tertiary <code>나중에</code>.</li>
+      <li><code>검토 기준 보기</code> 버튼은 삭제 — 다음 화면에서 항상 보이니까.</li>
+    </ul>
+
+    <h4>우측 상시 패널 (폭 320–360)</h4>
+    <div class="mock">
+      <div class="mock-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span>② 테스트 영상 — 작업 화면</span></div>
+      <div class="mock-body">
+        <div class="mock-canvas">
+          <div class="ghost h-lg"></div>
+          <div class="ghost h" style="width:80%"></div>
+          <div class="ghost row"></div>
+          <div class="ghost row" style="opacity:.7"></div>
+          <div class="ghost row" style="opacity:.45"></div>
+        </div>
+        <div class="mock-panel">
+          <div class="panel-tabs">
+            <span class="ptab on">체크리스트</span>
+            <span class="ptab">검토 기준</span>
+            <span class="ptab">도움받기</span>
+          </div>
+          <div class="check"><span class="box done"></span><span>FHD 1920×1080 이상 · 16:9</span></div>
+          <div class="check"><span class="box done"></span><span>영상 5분 이상</span></div>
+          <div class="check"><span class="box"></span><span>촬영 구도에 얼굴·손 모두 보이기</span></div>
+          <div class="check"><span class="box"></span><span>자막 파일 첨부</span></div>
+          <div class="panel-cta">막히셨나요? 15분 통화 잡기</div>
+        </div>
+      </div>
+    </div>
+    <p class="caption">첫 진입 때만 자동으로 펼쳐지고, 이후엔 접힘/펼침 상태를 기억한다. 접히면 우측에 아이콘 레일만 남는다.</p>
+
+    <ul>
+      <li><strong>체크리스트</strong> — 해상도·길이·첨부처럼 시스템이 판정 가능한 항목은 자동 체크, 나머지는 수동. 상단에 <code>n/m 완료</code>.</li>
+      <li><strong>검토 기준</strong> — 반려 사유 Top 5 + 통과/실패 예시 이미지 비교. 규정집이 아니라 눈으로 비교되는 형태.</li>
+      <li><strong>도움받기</strong> — 해피에게 묻기 / 케어 미팅 인라인 예약 / 가이드 문서.</li>
+      <li><strong>컨텍스트 전환</strong> — 강의 행을 선택하면 패널이 그 강의의 반려 사유로 바뀐다. 지금 메일·채팅으로 새던 피드백이 작업 화면 안으로 들어온다.</li>
+      <li><strong>우하단 정리</strong> — 플로팅 버튼 2개(가이드·해피)를 이 레일에 흡수해 중복을 없앤다.</li>
+      <li><strong>반응형</strong> — 1440↑ push, 1280↓ overlay.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>제안 B · 의견 2</h2>
+    <h3>케어 미팅은 만드는 게 아니라 연결하는 일</h3>
+    <p class="lede">예약·변경·취소·사전 질문 입력은 이미 다 있다. 새로 만들 건 <strong>진입점 4개</strong>와 <strong>맥락 자동 첨부</strong>다.</p>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>진입점</th><th>트리거</th><th>카피</th></tr></thead>
+        <tbody>
+          <tr><td>우측 패널 <code>도움받기</code> / 접힘 레일</td><td class="num">상시</td><td>막히셨나요? 15분 통화로 풀어드릴게요</td></tr>
+          <tr><td><strong>승인 모달 + 다음 단계 진입 배너</strong></td><td class="num">단계 전환</td><td>②테스트 영상, 뭘 준비할지 15분만에 설명드릴게요</td></tr>
+          <tr><td>해피가 먼저 말 걸기</td><td class="num">막힘 감지</td><td>이 부분 두 번째 개선 요청이네요. 매니저와 15분 통화 잡아드릴까요?</td></tr>
+          <tr><td>해피 답변 하단</td><td class="num">해결 안 됨</td><td>사람에게 물어볼까요?</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">“단계 하나 패스할 때 구두 설명이 필요하다”는 니즈에 정확히 대응하는 건 두 번째 진입점이다.</p>
+
+    <h4>막힘 감지 트리거</h4>
+    <ul>
+      <li>같은 강의에 <span class="pill warn">개선 필요</span> 2회 이상</li>
+      <li>단계 마감 D-3인데 진척률 0%</li>
+      <li>7일 무활동 / 체크리스트 항목이 3일 이상 미완</li>
+    </ul>
+
+    <h4>미팅 타입 3종 — 기존 컴포넌트 재사용</h4>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>타입</th><th>길이</th><th>아젠다</th><th>재사용</th></tr></thead>
+        <tbody>
+          <tr><td>단계 오리엔테이션</td><td class="num">15분</td><td>단계별 고정 아젠다 자동 세팅</td><td>1:1 상담 슬롯</td></tr>
+          <tr><td>1:1 케어</td><td class="num">30분</td><td>자유 주제 + 반려 사유 자동 첨부</td><td>1:1 기획 상담 확장</td></tr>
+          <tr><td>그룹 오피스아워</td><td class="num">30분</td><td>주 1회 공통 Q&amp;A</td><td>그룹 설명회(정원 5명) 그대로</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <span class="k">차별점</span>
+      <p><strong>예약할 때 맥락이 따라간다.</strong> 현재 단계 · 대상 강의 · 반려 사유 · 미충족 체크리스트가 자동으로 담겨,
+        이미 만들어져 있는 미팅 상세의 “궁금한 점 물어보기”에 프리필된다. 크리에이터는 상황을 다시 설명하지 않고,
+        매니저는 준비 없이 들어와도 맥락을 안다.</p>
+      <p><strong>미팅이 끝나면 화면에 남는다.</strong> 매니저가 남긴 액션 아이템이 우측 패널 체크리스트에 To-do로 꽂히고,
+        필요하면 마감일 재조정을 함께 제안한다. 일회성 상담이 아니라 작업 화면에 남는 결과물이 된다.</p>
+    </div>
+
+    <p>예약 UI는 전면 페이지 이동 없이 <strong>패널 안 인라인</strong>으로. 가까운 3일치 슬롯만 보여주고
+      <code>다른 날짜 보기</code>에서 기존 캘린더 화면으로 넘긴다. 즉시 확정, 기존 <em>5분 전 참여</em>·<em>변경/취소</em> 흐름에 그대로 연결.
+      매니저 부하는 해피 1차 필터 + 정형 15분 + 그룹 오피스아워로 흡수한다.</p>
+  </section>
+
+  <section>
+    <h2>제안 C · 의견 3</h2>
+    <h3>마감일은 위협이 아니라 페이스</h3>
+    <p class="lede">추천값은 시스템이 균등 분배해 채워두고, 확정은 크리에이터가 한다. 변경은 버튼 하나로 쉽게, 대신 흔적은 남는다.</p>
+
+    <div class="pcard">
+      <div class="pcard-main">
+        <span class="pcard-title">전체 검토 승인까지 33개 남음</span>
+        <span class="pcard-sub">시작이 반이에요. 차근차근 가볼까요?</span>
+        <div class="bar"><i></i></div>
+        <div class="counts"><span>승인 7개</span><span>총 40개</span></div>
+      </div>
+      <div class="pcard-side">
+        <span class="dday">이 단계 마감 8/20 · D-5</span>
+        <span class="pace"><strong>하루 4개</strong>씩이면 맞출 수 있어요</span>
+        <button class="btn-ghost" type="button">일정 변경</button>
+      </div>
+    </div>
+    <p class="caption">기존 진행률 카드 우측에 붙는 마감 블록. 진행 단위가 이미 개수라 페이스 계산이 되고, 이 한 줄이 마감일을 가이드로 바꾼다.</p>
+
+    <h4>화면 반영</h4>
+    <ul>
+      <li><strong>스테퍼에 날짜</strong> — 각 스텝 아래 <code>~8/20</code>, 현재 스텝은 <span class="pill info">D-5</span>, 지연이면 <span class="pill bad">D+3</span>.</li>
+      <li><strong>일정 변경 시트</strong> — 새 날짜 + 사유(촬영 일정 지연 / 개인 사정 / 기준을 잘 모르겠음 / 기타) + <code>이 단계 미팅도 잡기</code> 체크박스.
+        사유가 “기준을 잘 모르겠음”이면 미팅 CTA를 강조한다. 매니저 컨택 없이 소통되고, 매니저에겐 이탈 사유 데이터가 쌓인다.</li>
+      <li><strong>알림</strong> — D-3 · D-day · D+3. D+3 알림에는 미팅 제안을 붙인다.</li>
+    </ul>
+
+    <h4>변경 등급화 (KDP 방식)</h4>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>변경 횟수</th><th>동작</th></tr></thead>
+        <tbody>
+          <tr><td class="num">1회차</td><td>무마찰. 사유 선택만, 즉시 반영</td></tr>
+          <tr><td class="num">2회차</td><td>사유 필수 + 매니저 알림</td></tr>
+          <tr><td class="num">3회차 ↑ / D+7 초과</td><td>매니저 컨택 · <span class="pill warn">보류</span> 상태 전환 제안</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>추천 일정 기본값 <span class="pill warn">TODO(브랜드)</span></h4>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>단계</th><th>기본 소요</th><th>매니저 상태 정의</th><th>조건</th></tr></thead>
+        <tbody>
+          <tr><td>① 강의 기획안</td><td class="num">7일</td><td><span class="pill ok">정상</span></td><td class="num">마감일 이내</td></tr>
+          <tr><td>② 테스트 영상</td><td class="num">7일</td><td><span class="pill warn">지연</span></td><td class="num">D+1 ~ D+6</td></tr>
+          <tr><td>③ 강의 제작</td><td class="num">강의 수 × 0.5일</td><td><span class="pill bad">위험</span></td><td class="num">D+7 ↑ 또는 변경 3회 ↑</td></tr>
+          <tr><td>④ 런칭 예약</td><td class="num">3일</td><td><span class="pill bad">중단 추정</span></td><td class="num">14일 무활동</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">실제 소요 데이터로 보정 필요. 어드민 목록 화면은 저장소 규칙대로 1열 full-width(콘텐츠 1600) 테이블 패턴을 쓴다.</p>
+
+    <div class="callout">
+      <span class="k">대안 · 런칭일 역산 모드</span>
+      <p>“언제 런칭하고 싶으세요?”를 먼저 물어 목표일을 받고 단계별로 균등 분배하는 방식.
+        리서치가 가장 효과적이라고 본 형태(균등 분배 외부 마감일)에 가장 가깝고 동기 부여도 크다.
+        둘 다 지원하되 <strong>어느 쪽을 기본값으로 둘지 결정이 필요하다.</strong></p>
+    </div>
+  </section>
+
+  <section>
+    <h2>통합</h2>
+    <h3>세 제안이 만나는 곳</h3>
+    <p>우측 패널이 허브가 된다. 세 질문의 답이 한 화면에 상주하면, 승인 모달은 축하만 해도 충분해진다.</p>
+    <div class="hub">
+      <div>
+        <span class="q">지금 뭘, 언제까지?</span>
+        <span class="a">체크리스트 + 마감일 · 페이스 라인</span>
+      </div>
+      <div>
+        <span class="q">어느 수준까지 해야 통과?</span>
+        <span class="a">검토 기준 · 통과/실패 예시 · 강의별 반려 사유</span>
+      </div>
+      <div>
+        <span class="q">막히면 누구한테?</span>
+        <span class="a">해피 · 케어 미팅 인라인 예약</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>검증</h2>
+    <h3>리스크와 지표</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>리스크</th><th>완화</th></tr></thead>
+        <tbody>
+          <tr><td>마감일 압박이 오히려 이탈을 가속</td><td>톤을 “마감”이 아니라 “약속”으로. 변경 무마찰. <code>D+</code> 지연 표기를 크리에이터에게도 보일지는 A/B</td></tr>
+          <tr><td>미팅 예약 증가로 매니저 부하</td><td>15분 정형 · 그룹 오피스아워로 흡수, 해피 1차 필터, 슬롯 상한</td></tr>
+          <tr><td>패널이 좁은 화면에서 작업 영역 압박</td><td>1280 이하 overlay, 접힘 상태 기억</td></tr>
+          <tr><td>자기부과 마감일 효과 자체가 불확실</td><td>추천 일정(외부 기준)을 기본값으로 + 실험으로 검증</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>성공 지표</h4>
+    <ul>
+      <li>단계별 완주율 / 단계별 실제 소요일 중앙값</li>
+      <li>케어 미팅 예약률 → <strong>미팅 후 7일 내 다음 단계 진입률</strong></li>
+      <li>일정 변경 후 새 마감일 준수율</li>
+      <li>반려 재발률(같은 강의 2회 이상 개선 필요) — 우측 패널의 실효성 지표</li>
+      <li>승인 모달 CTA 클릭률 (현재 <code>검토 기준 보기</code> 대비)</li>
+      <li>중단 추정 조기 발견 리드타임 (매니저 관점)</li>
+    </ul>
+
+    <h4>실행 순서</h4>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>릴리즈</th><th>범위</th></tr></thead>
+        <tbody>
+          <tr><td class="num">1차</td><td>승인 모달 정리(CS 채팅 분리) + 우측 패널(체크리스트·검토 기준) + 도움받기 탭에 기존 미팅 예약 연결</td></tr>
+          <tr><td class="num">2차</td><td>단계별 마감일 — 설정 · 표시 · 페이스 라인 · 변경 · 알림 + 어드민 상태 필터</td></tr>
+          <tr><td class="num">3차</td><td>맥락 자동 첨부 · 막힘 감지 트리거 · 미팅 액션 아이템 → 체크리스트 연동</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>결정 필요</h2>
+    <h3>넘어가기 전에 답이 필요한 것</h3>
+    <ol class="q">
+      <li>마감일 기준을 <strong>단계별 소요일 누적</strong>으로 잡을지, <strong>런칭 목표일 역산</strong>으로 잡을지 — 둘 다 지원하되 기본값을 골라야 한다.</li>
+      <li>마감일 미준수에 계약상 실제 페널티가 있는지. 있다면 카피 톤이 완전히 달라진다.</li>
+      <li>케어 미팅 담당자가 기존 미팅과 같은 제작팀인지, 별도 케어 담당인지 — 슬롯 풀 분리 여부.</li>
+      <li>우하단 플로팅 버튼(해피·가이드)을 패널 레일로 흡수해도 되는지 — 다른 페이지와 공유되는 전역 컴포넌트일 가능성.</li>
+    </ol>
+  </section>
+
+  <footer>
+    <p>참고 자료</p>
+    <ul>
+      <li><a href="https://kdp.amazon.com/en_US/help/topic/G201499480">Amazon KDP — Reschedule a pre-order release</a></li>
+      <li><a href="https://fiverrpromotion.net/blog/how-to-extend-delivery-date-on-a-fiverr-order/">Fiverr — Extend delivery date on an order</a></li>
+      <li><a href="https://web.mit.edu/ariely/www/MIT/Papers/deadlines.pdf">Ariely &amp; Wertenbroch (2002), Procrastination, Deadlines, and Performance</a> · <a href="https://journals.sagepub.com/doi/10.1177/09567976261460772">2026 재현 연구</a></li>
+      <li><a href="https://support.udemy.com/hc/en-us/articles/229604988-Udemy-Course-Quality-Checklist">Udemy Course Quality Checklist</a> · <a href="https://teach.udemy.com/course-creation/recommended-course-creation-process/">Recommended course creation process</a></li>
+      <li><a href="https://inflab-1.gitbook.io/inflearn/course-open/submit">인프런 지식공유자 가이드 — 강의 제출하기</a></li>
+      <li><a href="https://inquirly.ai/blog/ai-automation/chatbot-to-human-handoff/">Chatbot to human handoff 베스트 프랙티스</a> · <a href="https://cal.com/embed">Cal.com embed</a></li>
+    </ul>
+  </footer>
+
+</div>
